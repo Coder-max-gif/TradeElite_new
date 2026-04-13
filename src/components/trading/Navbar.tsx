@@ -35,16 +35,22 @@ export function Navbar() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Equity</p>
-              <p className="text-sm font-bold text-primary glow-gold">${equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
+              <motion.p
+                className="text-sm font-bold text-primary glow-gold"
+                animate={{ opacity: [0.8, 1, 0.8] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ${equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </motion.p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Floating P/L</p>
               <motion.p
-                className="text-sm font-bold text-profit glow-profit"
+                className={`text-sm font-bold ${floatingPnL >= 0 ? 'text-profit glow-profit' : 'text-loss glow-loss'}`}
                 animate={{ opacity: [0.8, 1, 0.8] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                +${floatingPnL.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {floatingPnL >= 0 ? "+" : "-"}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </motion.p>
             </div>
             <Link to="/account">

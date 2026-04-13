@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from "react";
-import type { Transaction, ActiveTradeData, UserData } from "./store.types";
+import type { Transaction, Trade, UserData } from "./store.types";
 
-export type { Transaction, ActiveTradeData, UserData };
+export type { Transaction, Trade, UserData };
 
 interface StoreState {
   balance: number;
@@ -10,21 +10,19 @@ interface StoreState {
   transactions: Transaction[];
   user: UserData;
   currentPrice: number;
-  activeTrade: ActiveTradeData;
+  trades: Trade[];
   deposit: (amount: number) => void;
   withdraw: (amount: number) => boolean;
   setCurrentPrice: (price: number) => void;
   setFloatingPnL: (pnl: number) => void;
-  setActiveTrade: (trade: ActiveTradeData) => void;
+  setTrades: (trades: Trade[]) => void;
 }
 
 const StoreContext = createContext<StoreState | null>(null);
 
-const INITIAL_BALANCE = 350000;
-const INITIAL_PNL = 150000;
-const LOT_SIZE = 50;
-const MULTIPLIER = 100;
-const INITIAL_PRICE = 2360.0;
+const INITIAL_BALANCE = 420000;
+const INITIAL_PNL = 120000;
+const INITIAL_PRICE = 4731.0;
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState(INITIAL_BALANCE);
@@ -34,33 +32,59 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     {
       id: crypto.randomUUID(),
       type: "DEPOSIT",
-      amount: 350000,
-      date: new Date().toISOString(),
+      amount: 420000,
+      date: new Date("2026-03-09T00:00:00Z").toISOString(),
       status: "Completed",
     }
   ]);
   const [currentPrice, setCurrentPrice] = useState(INITIAL_PRICE);
   
-  // Locked trade state after initialization
-  const [activeTrade, setActiveTrade] = useState<ActiveTradeData>(() => {
-    // We want the profit to start at exactly $150,000.
-    // By setting entryPrice = INITIAL_PRICE, the initial price movement is $0.
-    // The calculatePnL function adds the $150,000 base to this.
-    const startPrice = INITIAL_PRICE;
-    return {
-      asset: "OANDA:XAUUSD",
-      direction: "BUY",
-      lotSize: LOT_SIZE,
-      multiplier: MULTIPLIER,
-      entryPrice: startPrice,
-      currentPrice: startPrice,
-      profit: INITIAL_PNL,
-    };
-  });
+  const [trades, setTrades] = useState<Trade[]>([
+    {
+      id: crypto.randomUUID(),
+      type: "SELL",
+      lot: 4.5,
+      entryPrice: 5137,
+      symbol: "XAUUSD",
+      openDate: new Date(Date.now() - 86400000 * 5).toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "SELL",
+      lot: 1.5,
+      entryPrice: 5078,
+      symbol: "XAUUSD",
+      openDate: new Date(Date.now() - 86400000 * 4).toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "SELL",
+      lot: 1,
+      entryPrice: 4637,
+      symbol: "XAUUSD",
+      openDate: new Date(Date.now() - 86400000 * 3).toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "SELL",
+      lot: 12,
+      entryPrice: 4195,
+      symbol: "XAUUSD",
+      openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+    },
+    {
+      id: crypto.randomUUID(),
+      type: "BUY",
+      lot: 17.1,
+      entryPrice: 4417,
+      symbol: "XAUUSD",
+      openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+    }
+  ]);
 
   const user: UserData = {
-    name: "Krishna Bagale",
-    email: "baglekrishna7@gmail.com",
+    name: "KETANKUMAR BAGLE",
+    email: "ketankumarbagle@gmail.com",
     phone: "+91 9922XXXXXX",
   };
 
@@ -112,8 +136,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setFloatingPnL(pnl);
   }, []);
 
-  const setActiveTradeWrapper = useCallback((trade: ActiveTradeData) => {
-    setActiveTrade(trade);
+  const setTradesWrapper = useCallback((newTrades: Trade[]) => {
+    setTrades(newTrades);
   }, []);
 
   const equity = balance + floatingPnL;
@@ -127,12 +151,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         transactions,
         user,
         currentPrice,
-        activeTrade,
+        trades,
         deposit,
         withdraw,
         setCurrentPrice: setCurrentPriceWrapper,
         setFloatingPnL: setFloatingPnLWrapper,
-        setActiveTrade: setActiveTradeWrapper,
+        setTrades: setTradesWrapper,
       }}
     >
       {children}

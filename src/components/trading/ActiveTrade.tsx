@@ -1,77 +1,97 @@
-import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useStore } from "@/state/store";
+import { calculateTradePnL } from "@/utils/pnlCalculator";
 
 export function ActiveTrade() {
-  const { activeTrade, currentPrice, floatingPnL, setFloatingPnL, setActiveTrade, setCurrentPrice, balance } = useStore();
-  const { entryPrice, lotSize, multiplier, asset, direction } = activeTrade;
+  const { trades, currentPrice, floatingPnL } = useStore();
 
-  useEffect(() => {
-    // The store's setCurrentPrice and setFloatingPnL are already being updated by TradingChart.tsx
-    // We don't need a separate interval here which causes flickering.
-    // The component will naturally re-render when the store state changes.
-  }, []);
-
-  const profitPercent = balance > 0 ? (floatingPnL / balance) * 100 : 0;
+  const totalBuyLots = trades.filter(t => t.type === "BUY").reduce((acc, t) => acc + t.lot, 0);
+  const totalSellLots = trades.filter(t => t.type === "SELL").reduce((acc, t) => acc + t.lot, 0);
+  const netExposure = totalBuyLots - totalSellLots;
   const isPositive = floatingPnL >= 0;
 
   return (
-    <div className="glass-panel rounded-xl p-4 glow-border-profit">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-xs font-semibold text-primary uppercase tracking-widest">Active Trade</h3>
-        <span className="px-2 py-0.5 text-xs font-bold rounded bg-profit/20 text-profit">{direction}</span>
+    <div className="glass-panel rounded-xl p-4 glow-border-profit overflow-hidden flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-primary uppercase tracking-widest">Open Positions</h3>
+        <span className="px-2 py-0.5 text-xs font-bold rounded bg-primary/20 text-primary">{trades.length}</span>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Asset</span>
-          <span className="font-semibold text-primary">{asset}</span>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-left">
+          <thead className="text-xs text-muted-foreground border-b border-border">
+            <tr>
+              <th className="pb-2 font-medium">Type</th>
+              <th className="pb-2 font-medium text-right">Lot</th>
+              <th className="pb-2 font-medium text-right">Entry</th>
+              <th className="pb-2 font-medium text-right">Current</th>
+              <th className="pb-2 font-medium text-right">PnL</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/50">
+            {trades.map((trade) => {
+              const pnl = calculateTradePnL(trade, currentPrice);
+              const isTradePositive = pnl >= 0;
+              return (
+                <tr key={trade.id} className="hover:bg-accent/5 transition-colors">
+                  <td className="py-2">
+                    <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${trade.type === 'BUY' ? 'bg-profit/20 text-profit' : 'bg-loss/20 text-loss'}`}>
+                      {trade.type}
+                    </span>
+                  </td>
+                  <td className="py-2 text-right font-mono">{trade.lot}</td>
+                  <td className="py-2 text-right font-mono">{trade.entryPrice.toFixed(2)}</td>
+                  <td className="py-2 text-right font-mono">
+                    <motion.span
+                      key={currentPrice.toFixed(2)}
+                      initial={{ opacity: 0.7 }}
+                      animate={{ opacity: 1 }}
+                    >
+                      {currentPrice.toFixed(2)}
+                    </motion.span>
+                  </td>
+                  <td className="py-2 text-right font-mono">
+                    <motion.span
+                      key={Math.floor(pnl)}
+                      initial={{ scale: 1.02 }}
+                      animate={{ scale: 1 }}
+                      className={isTradePositive ? "text-profit" : "text-loss"}
+                    >
+                      {isTradePositive ? "+" : "-"}${Math.abs(pnl).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                    </motion.span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="border-t border-border pt-4 space-y-2">
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground">Total Buy Lots</span>
+          <span className="font-mono text-foreground">{totalBuyLots.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Lot Size</span>
-          <span className="font-mono text-foreground">{lotSize}</span>
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground">Total Sell Lots</span>
+          <span className="font-mono text-foreground">{totalSellLots.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Entry</span>
-          <span className="font-mono text-foreground">${entryPrice.toFixed(2)}</span>
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground">Net Exposure</span>
+          <span className="font-mono text-foreground">{netExposure > 0 ? "+" : ""}{netExposure.toFixed(2)}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Current</span>
+        
+        <div className="pt-2 mt-2 border-t border-border/50 flex justify-between items-center">
+          <span className="text-muted-foreground text-sm font-semibold">Total Floating PnL</span>
           <motion.span
-            key={currentPrice.toFixed(2)}
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: 1 }}
-            className="font-mono text-foreground"
+            key={Math.floor(floatingPnL)}
+            initial={{ scale: 1.05 }}
+            animate={{ scale: 1 }}
+            className={`text-lg font-bold ${isPositive ? "text-profit glow-profit" : "text-loss glow-loss"}`}
           >
-            ${currentPrice.toFixed(2)}
+            {isPositive ? "+" : "-"}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </motion.span>
         </div>
-
-        <div className="border-t border-border pt-3">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground text-sm">Profit</span>
-            <motion.span
-              key={Math.floor(floatingPnL)}
-              initial={{ scale: 1.05 }}
-              animate={{ scale: 1 }}
-              className={`text-lg font-bold ${isPositive ? "text-profit glow-profit" : "text-loss"}`}
-            >
-              {isPositive ? "+" : ""}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-            </motion.span>
-          </div>
-        </div>
-
-        <div className="relative h-2 bg-accent rounded-full overflow-hidden">
-          <motion.div
-            className={`absolute inset-y-0 left-0 rounded-full ${isPositive ? "bg-gradient-to-r from-profit to-primary" : "bg-gradient-to-r from-loss to-destructive"}`}
-            initial={{ width: "0%" }}
-            animate={{ width: `${Math.min(Math.max(Math.abs(profitPercent) * 2, 5), 100)}%` }}
-            transition={{ duration: 1, ease: "easeOut" }}
-          />
-        </div>
-        <p className={`text-xs text-center ${isPositive ? "text-profit" : "text-loss"}`}>
-          {isPositive ? "+" : ""}{profitPercent.toFixed(2)}% {isPositive ? "in profit" : "in loss"}
-        </p>
       </div>
     </div>
   );

@@ -6,14 +6,13 @@ export interface Transaction {
   status: "Completed" | "Pending";
 }
 
-export interface ActiveTradeData {
-  asset: string;
-  direction: "BUY" | "SELL";
-  lotSize: number;
-  multiplier: number;
+export interface Trade {
+  id: string;
+  type: "BUY" | "SELL";
+  lot: number;
   entryPrice: number;
-  currentPrice: number;
-  profit: number;
+  symbol: string;
+  openDate: string;
 }
 
 export interface UserData {
