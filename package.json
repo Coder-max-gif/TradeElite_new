@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "start": "node server.js",
     "lint": "eslint .",
-    "deploy:cf": "bun run build && wrangler deploy"
+    "build:cf": "npm install && vite build"
   },
   "dependencies": {
     "express": "^4.21.2",
