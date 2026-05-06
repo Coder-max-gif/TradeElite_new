@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tradeelite",
-  "compatibility_date": "2025-09-24",
+  "compatibility_date": "2024-04-03",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry"
+  "main": ".output/server/index.mjs",
+  "pages_build_output_dir": "dist/client"
 }
