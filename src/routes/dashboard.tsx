@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { useStore } from "@/state/store";
 import { Navbar } from "@/components/trading/Navbar";
 import { MarketWatch } from "@/components/trading/MarketWatch";
 import { TradingChart } from "@/components/trading/TradingChart";
@@ -19,7 +20,17 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function DashboardContent() {
+  const { isAuthenticated } = useStore();
+  const navigate = useNavigate();
   const [selectedSymbol, setSelectedSymbol] = useState("OANDA:XAUUSD");
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: "/login" });
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

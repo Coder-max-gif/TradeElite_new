@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useStore } from "@/state/store";
 import { Navbar } from "@/components/trading/Navbar";
 import { motion } from "framer-motion";
@@ -20,7 +21,16 @@ export const Route = createFileRoute("/account")({
 });
 
 function AccountPage() {
-  const { user, balance, equity, transactions } = useStore();
+  const { user, balance, equity, transactions, isAuthenticated } = useStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: "/login" });
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col overflow-hidden">

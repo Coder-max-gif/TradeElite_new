@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useStore } from "@/state/store";
 import { 
   Lock, 
   User, 
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { login } = useStore();
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -32,7 +34,13 @@ function LoginPage() {
     // Artificial delay for realism
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    if (userId === "140830" && password === "Krishna@14") {
+    const validCredentials: Record<string, string> = {
+      "140830": "Krishna@14",
+      "250912": "Hitesh@1408",
+    };
+
+    if (validCredentials[userId] && password === validCredentials[userId]) {
+      login(userId);
       navigate({ to: "/dashboard" });
     } else {
       setError("Invalid credentials. Please check your ID and password.");
