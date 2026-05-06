@@ -33,7 +33,7 @@ async function fetchRestPrice(symbol: string): Promise<number> {
     }
   }
   
-  // Generic fallback for other symbols
+  // Generic fallback for other symbols - return static values to avoid fetch errors
   const bases: Record<string, number> = {
     "OANDA:XAUUSD": 4731.00,
     "OANDA:EURUSD": 1.0872,

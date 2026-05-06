@@ -1,6 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tradeelite",
-  "compatibility_date": "2024-04-03",
-  "compatibility_flags": ["nodejs_compat"]
-}
