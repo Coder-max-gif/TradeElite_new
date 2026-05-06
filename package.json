@@ -6,7 +6,7 @@
   "packageManager": "bun@1.2.15",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && rm -f dist/client/wrangler.json",
     "preview": "vite preview",
     "start": "node server.js",
     "lint": "eslint ."
