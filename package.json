@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "start": "node server.js",
     "lint": "eslint .",
-    "build:cf": "npm install --force && npx vite build"
+    "build:cf": "npm install && npm run build"
   },
   "dependencies": {
     "express": "^4.21.2",
