@@ -2,7 +2,5 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tradeelite",
   "compatibility_date": "2024-04-03",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": ".output/server/index.mjs",
-  "pages_build_output_dir": "dist/client"
+  "compatibility_flags": ["nodejs_compat"]
 }
