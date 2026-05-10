@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "bun@1.2.15",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite -c vite.spa.config.ts",
     "build": "vite build -c vite.spa.config.ts",
     "preview": "vite preview",
     "start": "node server.js",
