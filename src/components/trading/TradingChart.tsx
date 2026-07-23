@@ -42,8 +42,9 @@ export function TradingChart({ symbol }: Props) {
     const unsubscribe = subscribeToPrice("OANDA:XAUUSD", (latestPrice) => {
       // 1. Update global state
       setCurrentPrice(latestPrice);
-      const totalPnL = calculateTotalPnL(trades, latestPrice);
-      setFloatingPnL(totalPnL);
+      // Keep floating P/L fixed at the requested account value.
+      // const totalPnL = calculateTotalPnL(trades, latestPrice);
+      // setFloatingPnL(totalPnL);
 
       // 2. Process indicator logic
       const isNewCandle = candleBuilderRef.current.addTick(latestPrice);

@@ -1,14 +1,16 @@
 import { motion } from "framer-motion";
 import { useStore } from "@/state/store";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { calculateTradePnL } from "@/utils/pnlCalculator";
 
 export function ActiveTrade() {
   const { trades, currentPrice, floatingPnL } = useStore();
+  const animatedFloatingPnL = useAnimatedValue(floatingPnL, 4);
 
   const totalBuyLots = trades.filter(t => t.type === "BUY").reduce((acc, t) => acc + t.lot, 0);
   const totalSellLots = trades.filter(t => t.type === "SELL").reduce((acc, t) => acc + t.lot, 0);
   const netExposure = totalBuyLots - totalSellLots;
-  const isPositive = floatingPnL >= 0;
+  const isPositive = animatedFloatingPnL >= 0;
 
   return (
     <div className="glass-panel rounded-xl p-4 glow-border-profit overflow-hidden flex flex-col gap-4">
@@ -84,12 +86,12 @@ export function ActiveTrade() {
         <div className="pt-2 mt-2 border-t border-border/50 flex justify-between items-center">
           <span className="text-muted-foreground text-sm font-semibold">Total Floating PnL</span>
           <motion.span
-            key={Math.floor(floatingPnL)}
-            initial={{ scale: 1.05 }}
+            key={Math.floor(animatedFloatingPnL)}
+            initial={{ scale: 1.02 }}
             animate={{ scale: 1 }}
             className={`text-lg font-bold ${isPositive ? "text-profit glow-profit" : "text-loss glow-loss"}`}
           >
-            {isPositive ? "+" : "-"}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {isPositive ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </motion.span>
         </div>
       </div>

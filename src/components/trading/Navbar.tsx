@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useStore } from "@/state/store";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { AccountModal } from "@/components/trading/AccountModal";
 import { Link, useLocation } from "@tanstack/react-router";
 
 export function Navbar() {
   const { balance, floatingPnL, equity } = useStore();
+  const animatedEquity = useAnimatedValue(equity, 4);
+  const animatedFloatingPnL = useAnimatedValue(floatingPnL, 4);
   const [showAccount, setShowAccount] = useState(false);
   const location = useLocation();
   
@@ -37,20 +40,20 @@ export function Navbar() {
               <p className="text-xs text-muted-foreground">Equity</p>
               <motion.p
                 className="text-sm font-bold text-primary glow-gold"
-                animate={{ opacity: [0.8, 1, 0.8] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                animate={{ opacity: [0.9, 1, 0.9] }}
+                transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
               >
-                ${equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </motion.p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Floating P/L</p>
               <motion.p
-                className={`text-sm font-bold ${floatingPnL >= 0 ? 'text-profit glow-profit' : 'text-loss glow-loss'}`}
-                animate={{ opacity: [0.8, 1, 0.8] }}
-                transition={{ duration: 2, repeat: Infinity }}
+                className={`text-sm font-bold ${animatedFloatingPnL >= 0 ? 'text-profit glow-profit' : 'text-loss glow-loss'}`}
+                animate={{ opacity: [0.9, 1, 0.9] }}
+                transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
               >
-                {floatingPnL >= 0 ? "+" : "-"}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {animatedFloatingPnL >= 0 ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </motion.p>
             </div>
             <Link to="/account">

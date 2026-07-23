@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useStore } from "@/state/store";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { Navbar } from "@/components/trading/Navbar";
 import { motion } from "framer-motion";
 import { 
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/account")({
 
 function AccountPage() {
   const { user, balance, equity, transactions, isAuthenticated } = useStore();
+  const animatedEquity = useAnimatedValue(equity, 4);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -109,14 +111,20 @@ function AccountPage() {
                     <span className="text-xs font-bold text-muted-foreground uppercase">Current Balance</span>
                     <Wallet className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-2xl font-bold text-foreground">${balance.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-foreground">${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
                 <div className="glass-panel p-5 rounded-2xl bg-gradient-to-br from-profit/5 to-transparent border-profit/20">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-bold text-muted-foreground uppercase">Total Equity</span>
                     <ShieldCheck className="w-4 h-4 text-profit" />
                   </div>
-                  <p className="text-2xl font-bold text-foreground">${equity.toLocaleString()}</p>
+                  <motion.p
+                    className="text-2xl font-bold text-foreground"
+                    animate={{ opacity: [0.9, 1, 0.9] }}
+                    transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
+                  >
+                    ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </motion.p>
                 </div>
               </div>
 
@@ -147,14 +155,16 @@ function AccountPage() {
                           </div>
                           <div>
                             <p className="text-sm font-bold text-foreground">{tx.type}</p>
-                            <p className="text-[10px] text-muted-foreground">{new Date(tx.date).toLocaleDateString()}</p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {new Date(tx.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
                           <p className={`text-sm font-bold ${
                             tx.type === 'DEPOSIT' ? 'text-profit' : 'text-loss'
                           }`}>
-                            {tx.type === 'DEPOSIT' ? '+' : '-'}${tx.amount.toLocaleString()}
+                            {tx.type === 'DEPOSIT' ? '+' : '-'}${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                           <p className="text-[10px] text-muted-foreground uppercase">{tx.status}</p>
                         </div>

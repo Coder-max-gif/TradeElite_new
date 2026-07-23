@@ -23,17 +23,18 @@ interface StoreState {
 
 const StoreContext = createContext<StoreState | null>(null);
 
-const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number; trades: Trade[]; initialDepositDate?: string; initialDepositAmount?: number }> = {
+const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number; equity: number; trades: Trade[]; initialDepositDate?: string; initialDepositAmount?: number }> = {
   "140830": {
     user: {
       name: "KETANKUMAR BAGLE",
       email: "ketankumarbagle@gmail.com",
       phone: "+91 9922XXXXXX",
     },
-    balance: 500000,
-    pnl: 120000,
-    initialDepositAmount: 50000,
-    initialDepositDate: "2023-05-05T00:00:00Z",
+    balance: 10500,
+    pnl: 7500,
+    equity: 10500,
+    initialDepositAmount: 3000,
+    initialDepositDate: "2026-07-01T00:00:00Z",
     trades: [
       {
         id: crypto.randomUUID(),
@@ -83,10 +84,11 @@ const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number;
       email: "hitesh1408@gmail.com",
       phone: "+91 7744XXXXXX",
     },
-    balance: 500000,
-    pnl: 65000,
-    initialDepositAmount: 50000,
-    initialDepositDate: "2023-05-05T00:00:00Z",
+    balance: 10500,
+    pnl: 7500,
+    equity: 10500,
+    initialDepositAmount: 3000,
+    initialDepositDate: "2026-07-01T00:00:00Z",
     trades: [
       {
         id: crypto.randomUUID(),
@@ -118,12 +120,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [balance, setBalance] = useState(currentUserData.balance);
   const balanceRef = useRef(currentUserData.balance);
   const [floatingPnL, setFloatingPnL] = useState(currentUserData.pnl);
+  const [equity, setEquity] = useState(currentUserData.equity ?? currentUserData.balance + currentUserData.pnl);
   const [transactions, setTransactions] = useState<Transaction[]>([
     {
       id: crypto.randomUUID(),
       type: "DEPOSIT",
       amount: currentUserData.initialDepositAmount ?? currentUserData.balance,
-      date: currentUserData.initialDepositDate ?? new Date("2026-03-09T00:00:00Z").toISOString(),
+      date: currentUserData.initialDepositDate ?? new Date("2026-07-01T00:00:00Z").toISOString(),
       status: "Completed",
     }
   ]);
@@ -138,13 +141,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setBalance(data.balance);
       balanceRef.current = data.balance;
       setFloatingPnL(data.pnl);
+      setEquity(data.equity ?? data.balance + data.pnl);
       setTrades(data.trades);
       setTransactions([
         {
           id: crypto.randomUUID(),
           type: "DEPOSIT",
           amount: data.initialDepositAmount ?? data.balance,
-          date: data.initialDepositDate ?? new Date().toISOString(),
+          date: data.initialDepositDate ?? new Date("2026-07-01T00:00:00Z").toISOString(),
           status: "Completed",
         }
       ]);
@@ -208,8 +212,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const setTradesWrapper = useCallback((newTrades: Trade[]) => {
     setTrades(newTrades);
   }, []);
-
-  const equity = balance + floatingPnL;
 
   return (
     <StoreContext.Provider

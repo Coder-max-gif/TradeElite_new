@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/state/store";
+import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface Props {
@@ -10,6 +11,8 @@ interface Props {
 
 export function AccountModal({ open, onClose }: Props) {
   const { user, balance, equity, floatingPnL, transactions, deposit, withdraw } = useStore();
+  const animatedEquity = useAnimatedValue(equity, 4);
+  const animatedFloatingPnL = useAnimatedValue(floatingPnL, 4);
   const [depositAmount, setDepositAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [withdrawError, setWithdrawError] = useState("");
@@ -25,7 +28,7 @@ export function AccountModal({ open, onClose }: Props) {
     if (!amt || amt <= 0) return;
     deposit(amt);
     setDepositAmount("");
-    showSuccess(`$${amt.toLocaleString()} deposited successfully`);
+    showSuccess(`$${amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} deposited successfully`);
   };
 
   const handleWithdraw = () => {
@@ -38,7 +41,7 @@ export function AccountModal({ open, onClose }: Props) {
     withdraw(amt);
     setWithdrawAmount("");
     setWithdrawError("");
-    showSuccess(`$${amt.toLocaleString()} withdrawn successfully`);
+    showSuccess(`$${amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} withdrawn successfully`);
   };
 
   return (
@@ -71,18 +74,22 @@ export function AccountModal({ open, onClose }: Props) {
               </div>
               <div className="text-center p-3 rounded-lg bg-accent/30">
                 <p className="text-xs text-muted-foreground">Floating P/L</p>
-                <p className={`text-sm font-bold ${floatingPnL >= 0 ? 'text-profit glow-profit' : 'text-loss glow-loss'}`}>
-                  {floatingPnL >= 0 ? "+" : "-"}${Math.abs(floatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </p>
+                <motion.p
+                  className={`text-sm font-bold ${animatedFloatingPnL >= 0 ? 'text-profit glow-profit' : 'text-loss glow-loss'}`}
+                  animate={{ opacity: [0.9, 1, 0.9] }}
+                  transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
+                >
+                  {animatedFloatingPnL >= 0 ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </motion.p>
               </div>
               <div className="text-center p-3 rounded-lg bg-accent/30">
                 <p className="text-xs text-muted-foreground">Equity</p>
                 <motion.p
                   className="text-sm font-bold text-primary glow-gold"
-                  animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+                  animate={{ opacity: [0.9, 1, 0.9] }}
+                  transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
                 >
-                  ${equity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </motion.p>
               </div>
             </div>
@@ -169,10 +176,10 @@ export function AccountModal({ open, onClose }: Props) {
                     {transactions.map((tx) => (
                       <div key={tx.id} className="grid grid-cols-4 gap-2 text-sm px-3 py-2 rounded-lg bg-accent/20">
                         <span className="text-xs text-muted-foreground">
-                          {new Date(tx.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                          {new Date(tx.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
                         </span>
                         <span className={`text-xs font-bold ${tx.type === "DEPOSIT" ? "text-profit" : "text-loss"}`}>{tx.type}</span>
-                        <span className="text-right font-mono text-foreground">${tx.amount.toLocaleString()}</span>
+                        <span className="text-right font-mono text-foreground">${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         <span className="text-right text-xs text-profit">{tx.status}</span>
                       </div>
                     ))}
