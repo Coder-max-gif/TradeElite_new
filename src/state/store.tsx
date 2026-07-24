@@ -23,14 +23,14 @@ interface StoreState {
 
 const StoreContext = createContext<StoreState | null>(null);
 
-const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number; equity: number; trades: Trade[]; initialDepositDate?: string; initialDepositAmount?: number }> = {
+export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number; equity: number; trades: Trade[]; initialDepositDate?: string; initialDepositAmount?: number }> = {
   "140830": {
     user: {
       name: "KETANKUMAR BAGLE",
       email: "ketankumarbagle@gmail.com",
       phone: "+91 9922XXXXXX",
     },
-    balance: 10500,
+    balance: 3000,
     pnl: 7500,
     equity: 10500,
     initialDepositAmount: 3000,
@@ -38,43 +38,19 @@ const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number;
     trades: [
       {
         id: crypto.randomUUID(),
-        type: "SELL",
-        lot: 4.5,
-        entryPrice: 5137,
+        type: "BUY",
+        lot: 1.2,
+        entryPrice: 4031.27,
         symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 5).toISOString(),
-      },
-      {
-        id: crypto.randomUUID(),
-        type: "SELL",
-        lot: 1.5,
-        entryPrice: 5078,
-        symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 4).toISOString(),
-      },
-      {
-        id: crypto.randomUUID(),
-        type: "SELL",
-        lot: 1,
-        entryPrice: 4637,
-        symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 3).toISOString(),
-      },
-      {
-        id: crypto.randomUUID(),
-        type: "SELL",
-        lot: 12,
-        entryPrice: 4195,
-        symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+        openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
       },
       {
         id: crypto.randomUUID(),
         type: "BUY",
-        lot: 17.1,
-        entryPrice: 4417,
+        lot: 1.05,
+        entryPrice: 4013.41,
         symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+        openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
       }
     ]
   },
@@ -84,7 +60,7 @@ const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number;
       email: "hitesh1408@gmail.com",
       phone: "+91 7744XXXXXX",
     },
-    balance: 10500,
+    balance: 3000,
     pnl: 7500,
     equity: 10500,
     initialDepositAmount: 3000,
@@ -93,24 +69,24 @@ const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: number;
       {
         id: crypto.randomUUID(),
         type: "BUY",
-        lot: 2.0,
-        entryPrice: 2350,
+        lot: 1.2,
+        entryPrice: 4031.27,
         symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+        openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
       },
       {
         id: crypto.randomUUID(),
-        type: "SELL",
-        lot: 1.2,
-        entryPrice: 2380,
+        type: "BUY",
+        lot: 1.05,
+        entryPrice: 4013.41,
         symbol: "XAUUSD",
-        openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+        openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
       }
     ]
   }
 };
 
-const INITIAL_PRICE = 4731.0;
+const INITIAL_PRICE = 4056.27;
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [activeUserId, setActiveUserId] = useState<string>("140830");
