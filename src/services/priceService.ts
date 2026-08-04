@@ -1,16 +1,24 @@
 type PriceListener = (price: number) => void;
+
+/** Single source of truth for the simulated XAUUSD market level. */
+export const XAUUSD_BASE_PRICE = 4056.27;
+
+const POLL_INTERVAL_MS = 1500;
+const MICRO_NOISE_RANGE = 0.15; // +/- 0.075
+
 const listeners: Set<PriceListener> = new Set();
 let socket: WebSocket | null = null;
-let currentPrice = 0;
 let pollInterval: ReturnType<typeof setInterval> | null = null;
+let activeSymbol: string | null = null;
+let currentPrice = 0;
 
 /**
- * Normalizes price to stay within reasonable bounds
+ * Every subscriber receives the exact same tick value so all widgets
+ * update from one calculation cycle.
  */
-function normalizePrice(price: number): number {
-  if (price > 200000) return price / 10;
-  if (price < 0.00001) return 0.00001;
-  return price;
+function broadcast(price: number) {
+  currentPrice = price;
+  listeners.forEach((listener) => listener(price));
 }
 
 /**
@@ -19,12 +27,12 @@ function normalizePrice(price: number): number {
 async function fetchRestPrice(symbol: string): Promise<number> {
   if (symbol.includes("XAUUSD")) {
     // Use a fixed price level that matches the seeded open positions.
-    return 4056.27;
+    return XAUUSD_BASE_PRICE;
   }
-  
+
   // Generic fallback for other symbols - return static values to avoid fetch errors
   const bases: Record<string, number> = {
-    "OANDA:XAUUSD": 4731.00,
+    "OANDA:XAUUSD": XAUUSD_BASE_PRICE,
     "OANDA:EURUSD": 1.0872,
     "NASDAQ:NDX": 18245.30,
     "OANDA:GBPUSD": 1.2715,
@@ -36,23 +44,25 @@ async function fetchRestPrice(symbol: string): Promise<number> {
 /**
  * Connect to Binance WebSocket for real-time BTCUSD
  */
-function connectBinance(onPrice: PriceListener) {
+function connectBinance() {
   if (socket) socket.close();
-  
+
   socket = new WebSocket("wss://stream.binance.com:9443/ws/btcusdt@trade");
-  
+
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     if (data && data.p) {
-      const price = parseFloat(data.p);
-      currentPrice = price;
-      onPrice(price);
+      broadcast(parseFloat(data.p));
     }
   };
 
   socket.onclose = () => {
-    console.log("WebSocket closed, retrying in 2s...");
-    setTimeout(() => connectBinance(onPrice), 2000);
+    if (listeners.size > 0 && activeSymbol?.includes("BTCUSD")) {
+      console.log("WebSocket closed, retrying in 2s...");
+      setTimeout(() => {
+        if (listeners.size > 0 && activeSymbol?.includes("BTCUSD")) connectBinance();
+      }, 2000);
+    }
   };
 
   socket.onerror = (err) => {
@@ -61,11 +71,7 @@ function connectBinance(onPrice: PriceListener) {
   };
 }
 
-/**
- * Main entry point for real-time price streaming
- */
-export function subscribeToPrice(symbol: string, callback: PriceListener) {
-  // Clear previous streams
+function stopEngine() {
   if (socket) {
     socket.close();
     socket = null;
@@ -74,37 +80,50 @@ export function subscribeToPrice(symbol: string, callback: PriceListener) {
     clearInterval(pollInterval);
     pollInterval = null;
   }
+  activeSymbol = null;
+}
+
+function startEngine(symbol: string) {
+  stopEngine();
+  activeSymbol = symbol;
 
   if (symbol.includes("BTCUSD")) {
-    connectBinance(callback);
-  } else {
-    // REST polling fallback (1-2s interval) for non-websocket symbols
-    const poll = async () => {
-      const price = await fetchRestPrice(symbol);
-      if (price > 0) {
-        // Add tiny micro-fluctuations (noise) to make the PnL look alive, 
-        // as REST APIs often cache the price for several seconds or minutes.
-        const microNoise = (Math.random() - 0.5) * 0.15; // +/- 0.075
-        callback(price + microNoise);
-      }
-    };
-    poll();
-    pollInterval = setInterval(poll, 1500);
+    connectBinance();
+    return;
+  }
+
+  // REST polling fallback (1-2s interval) for non-websocket symbols
+  const poll = async () => {
+    const price = await fetchRestPrice(symbol);
+    if (price > 0) {
+      // Add tiny micro-fluctuations (noise) to make the PnL look alive,
+      // as REST APIs often cache the price for several seconds or minutes.
+      // Sampled once per tick so every subscriber sees the identical price.
+      const microNoise = (Math.random() - 0.5) * MICRO_NOISE_RANGE;
+      broadcast(price + microNoise);
+    }
+  };
+  poll();
+  pollInterval = setInterval(poll, POLL_INTERVAL_MS);
+}
+
+/**
+ * Main entry point for real-time price streaming.
+ * Multiple subscribers share one engine (one timer / one socket); each tick
+ * is broadcast to all of them simultaneously.
+ */
+export function subscribeToPrice(symbol: string, callback: PriceListener) {
+  listeners.add(callback);
+
+  if (activeSymbol !== symbol) {
+    startEngine(symbol);
+  } else if (currentPrice > 0) {
+    // Late subscriber: sync immediately with the latest tick, no stale gap.
+    callback(currentPrice);
   }
 
   return () => {
-    if (socket) socket.close();
-    if (pollInterval) clearInterval(pollInterval);
+    listeners.delete(callback);
+    if (listeners.size === 0) stopEngine();
   };
 }
-
-// Legacy exports for compatibility during refactor
-export async function fetchLivePrice(symbol: string): Promise<number> {
-  return fetchRestPrice(symbol);
-}
-
-export function simulateTick(price: number): number {
-  return price; // No artificial smoothing
-}
-
-export function setTargetPrice(p: number) {}

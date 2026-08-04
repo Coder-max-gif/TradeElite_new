@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { XAUUSD_BASE_PRICE } from "@/services/priceService";
 
 interface MarketItem {
   symbol: string;
@@ -10,7 +11,7 @@ interface MarketItem {
 }
 
 const markets: MarketItem[] = [
-  { symbol: "OANDA:XAUUSD", name: "Gold", price: 2364.50, change: 1.42, spread: 0.3 },
+  { symbol: "OANDA:XAUUSD", name: "Gold", price: XAUUSD_BASE_PRICE, change: 1.42, spread: 0.3 },
   { symbol: "OANDA:EURUSD", name: "Euro/Dollar", price: 1.0872, change: -0.15, spread: 0.1 },
   { symbol: "BITSTAMP:BTCUSD", name: "Bitcoin", price: 67520.00, change: 2.95, spread: 15.0 },
   { symbol: "NASDAQ:NDX", name: "NASDAQ 100", price: 18245.30, change: 0.65, spread: 1.2 },

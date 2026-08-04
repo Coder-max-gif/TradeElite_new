@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { subscribeToPrice } from "@/services/priceService";
-import { calculateTotalPnL } from "@/utils/pnlCalculator";
+import { subscribeToPrice, XAUUSD_BASE_PRICE } from "@/services/priceService";
 import { useStore } from "@/state/store";
 import { ScalperLiteCalculator, Signal } from "@/lib/indicators/scalperLite";
 import { CandleBuilder } from "@/services/candleBuilder";
@@ -11,10 +10,10 @@ interface Props {
 }
 
 export function TradingChart({ symbol }: Props) {
-  const { setCurrentPrice, setFloatingPnL, trades, user } = useStore();
+  const { user } = useStore();
   const [signals, setSignals] = useState<Signal[]>([]);
-  const [minPrice, setMinPrice] = useState(4700);
-  const [maxPrice, setMaxPrice] = useState(4800);
+  const [minPrice, setMinPrice] = useState(XAUUSD_BASE_PRICE - 50);
+  const [maxPrice, setMaxPrice] = useState(XAUUSD_BASE_PRICE + 50);
   
   // Persistence for indicator state
   const candleBuilderRef = useRef(new CandleBuilder(1));
@@ -38,15 +37,9 @@ export function TradingChart({ symbol }: Props) {
   }, [symbol]);
 
   useEffect(() => {
-    // Real-time engine for PnL and other stats
+    // Indicator pipeline; the shared price engine broadcasts the same tick that
+    // drives the store's price, floating P/L and equity.
     const unsubscribe = subscribeToPrice("OANDA:XAUUSD", (latestPrice) => {
-      // 1. Update global state
-      setCurrentPrice(latestPrice);
-      // Keep floating P/L fixed at the requested account value.
-      // const totalPnL = calculateTotalPnL(trades, latestPrice);
-      // setFloatingPnL(totalPnL);
-
-      // 2. Process indicator logic
       const isNewCandle = candleBuilderRef.current.addTick(latestPrice);
       
       if (isNewCandle) {
@@ -73,7 +66,7 @@ export function TradingChart({ symbol }: Props) {
     return () => {
       unsubscribe();
     };
-  }, [trades, setCurrentPrice, setFloatingPnL]);
+  }, []);
 
   // To add horizontal lines in TradingView iframe, we can inject 'studies' or 'range'.
   // However, simple iframe widgets do not natively support passing arbitrary horizontal lines

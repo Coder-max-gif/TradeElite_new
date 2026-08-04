@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useStore } from "@/state/store";
 import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { calculateTradePnL } from "@/utils/pnlCalculator";
+import { formatSignedCurrency, formatPrice, formatLots } from "@/utils/format";
 
 export function ActiveTrade() {
   const { trades, currentPrice, floatingPnL } = useStore();
@@ -41,15 +42,15 @@ export function ActiveTrade() {
                       {trade.type}
                     </span>
                   </td>
-                  <td className="py-2 text-right font-mono">{trade.lot}</td>
-                  <td className="py-2 text-right font-mono">{trade.entryPrice.toFixed(2)}</td>
+                  <td className="py-2 text-right font-mono">{formatLots(trade.lot)}</td>
+                  <td className="py-2 text-right font-mono">{formatPrice(trade.entryPrice)}</td>
                   <td className="py-2 text-right font-mono">
                     <motion.span
-                      key={currentPrice.toFixed(2)}
+                      key={formatPrice(currentPrice)}
                       initial={{ opacity: 0.7 }}
                       animate={{ opacity: 1 }}
                     >
-                      {currentPrice.toFixed(2)}
+                      {formatPrice(currentPrice)}
                     </motion.span>
                   </td>
                   <td className="py-2 text-right font-mono">
@@ -59,7 +60,7 @@ export function ActiveTrade() {
                       animate={{ scale: 1 }}
                       className={isTradePositive ? "text-profit" : "text-loss"}
                     >
-                      {isTradePositive ? "+" : "-"}${Math.abs(pnl).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      {formatSignedCurrency(pnl)}
                     </motion.span>
                   </td>
                 </tr>
@@ -72,15 +73,15 @@ export function ActiveTrade() {
       <div className="border-t border-border pt-4 space-y-2">
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Total Buy Lots</span>
-          <span className="font-mono text-foreground">{totalBuyLots.toFixed(2)}</span>
+          <span className="font-mono text-foreground">{formatLots(totalBuyLots)}</span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Total Sell Lots</span>
-          <span className="font-mono text-foreground">{totalSellLots.toFixed(2)}</span>
+          <span className="font-mono text-foreground">{formatLots(totalSellLots)}</span>
         </div>
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Net Exposure</span>
-          <span className="font-mono text-foreground">{netExposure > 0 ? "+" : ""}{netExposure.toFixed(2)}</span>
+          <span className="font-mono text-foreground">{netExposure > 0 ? "+" : ""}{formatLots(netExposure)}</span>
         </div>
         
         <div className="pt-2 mt-2 border-t border-border/50 flex justify-between items-center">
@@ -91,7 +92,7 @@ export function ActiveTrade() {
             animate={{ scale: 1 }}
             className={`text-lg font-bold ${isPositive ? "text-profit glow-profit" : "text-loss glow-loss"}`}
           >
-            {isPositive ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            {formatSignedCurrency(animatedFloatingPnL)}
           </motion.span>
         </div>
       </div>

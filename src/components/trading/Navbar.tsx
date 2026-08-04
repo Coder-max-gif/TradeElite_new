@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useStore } from "@/state/store";
 import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { AccountModal } from "@/components/trading/AccountModal";
+import { formatCurrency, formatSignedCurrency } from "@/utils/format";
 import { Link, useLocation } from "@tanstack/react-router";
 
 export function Navbar() {
@@ -34,7 +35,7 @@ export function Navbar() {
           <div className="flex items-center gap-8">
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Balance</p>
-              <p className="text-sm font-bold text-foreground">${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
+              <p className="text-sm font-bold text-foreground">{formatCurrency(balance)}</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Equity</p>
@@ -43,7 +44,7 @@ export function Navbar() {
                 animate={{ opacity: [0.9, 1, 0.9] }}
                 transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
               >
-                ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {formatCurrency(animatedEquity)}
               </motion.p>
             </div>
             <div className="text-right">
@@ -53,7 +54,7 @@ export function Navbar() {
                 animate={{ opacity: [0.9, 1, 0.9] }}
                 transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
               >
-                {animatedFloatingPnL >= 0 ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                {formatSignedCurrency(animatedFloatingPnL)}
               </motion.p>
             </div>
             <Link to="/account">

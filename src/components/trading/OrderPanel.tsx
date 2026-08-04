@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 export function OrderPanel() {
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [lotSize, setLotSize] = useState("1.00");
-  const [stopLoss, setStopLoss] = useState("2340.00");
-  const [takeProfit, setTakeProfit] = useState("2380.00");
+  const [stopLoss, setStopLoss] = useState("4040.00");
+  const [takeProfit, setTakeProfit] = useState("4080.00");
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleExecute = () => {

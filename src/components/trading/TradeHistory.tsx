@@ -1,9 +1,11 @@
+import { formatSignedCurrency, formatDate } from "@/utils/format";
+
 const trades = [
-  { id: 1, type: "BUY", asset: "Gold Futures (GC)", profit: 45000, date: "2024-03-15" },
-  { id: 2, type: "SELL", asset: "BTC/USD", profit: 12000, date: "2024-03-14" },
-  { id: 3, type: "BUY", asset: "EUR/USD", profit: -3000, date: "2024-03-13" },
-  { id: 4, type: "BUY", asset: "NAS100", profit: 28500, date: "2024-03-12" },
-  { id: 5, type: "SELL", asset: "GBP/USD", profit: 8700, date: "2024-03-11" },
+  { id: 1, type: "BUY", asset: "Gold Futures (GC)", profit: 45000, date: "2026-08-03" },
+  { id: 2, type: "SELL", asset: "BTC/USD", profit: 12000, date: "2026-08-01" },
+  { id: 3, type: "BUY", asset: "EUR/USD", profit: -3000, date: "2026-07-30" },
+  { id: 4, type: "BUY", asset: "NAS100", profit: 28500, date: "2026-07-28" },
+  { id: 5, type: "SELL", asset: "GBP/USD", profit: 8700, date: "2026-07-25" },
 ];
 
 export function TradeHistory() {
@@ -26,9 +28,9 @@ export function TradeHistory() {
             </div>
             <div className="text-right">
               <span className={`text-sm font-bold font-mono ${t.profit >= 0 ? "text-profit" : "text-loss"}`}>
-                {t.profit >= 0 ? "+" : ""}${Math.abs(t.profit).toLocaleString()}
+                {formatSignedCurrency(t.profit)}
               </span>
-              <p className="text-xs text-muted-foreground">{t.date}</p>
+              <p className="text-xs text-muted-foreground">{formatDate(t.date)}</p>
             </div>
           </div>
         ))}

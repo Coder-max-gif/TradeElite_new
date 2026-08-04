@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/state/store";
 import { useAnimatedValue } from "@/hooks/useAnimatedValue";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { formatCurrency, formatSignedCurrency, formatDate } from "@/utils/format";
 
 interface Props {
   open: boolean;
@@ -28,7 +29,7 @@ export function AccountModal({ open, onClose }: Props) {
     if (!amt || amt <= 0) return;
     deposit(amt);
     setDepositAmount("");
-    showSuccess(`$${amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} deposited successfully`);
+    showSuccess(`${formatCurrency(amt)} deposited successfully`);
   };
 
   const handleWithdraw = () => {
@@ -41,7 +42,7 @@ export function AccountModal({ open, onClose }: Props) {
     withdraw(amt);
     setWithdrawAmount("");
     setWithdrawError("");
-    showSuccess(`$${amt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} withdrawn successfully`);
+    showSuccess(`${formatCurrency(amt)} withdrawn successfully`);
   };
 
   return (
@@ -70,7 +71,7 @@ export function AccountModal({ open, onClose }: Props) {
             <div className="grid grid-cols-3 gap-3 mb-5">
               <div className="text-center p-3 rounded-lg bg-accent/30">
                 <p className="text-xs text-muted-foreground">Balance</p>
-                <p className="text-sm font-bold text-foreground">${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}</p>
+                <p className="text-sm font-bold text-foreground">{formatCurrency(balance)}</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-accent/30">
                 <p className="text-xs text-muted-foreground">Floating P/L</p>
@@ -79,7 +80,7 @@ export function AccountModal({ open, onClose }: Props) {
                   animate={{ opacity: [0.9, 1, 0.9] }}
                   transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
                 >
-                  {animatedFloatingPnL >= 0 ? "+" : "-"}${Math.abs(animatedFloatingPnL).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {formatSignedCurrency(animatedFloatingPnL)}
                 </motion.p>
               </div>
               <div className="text-center p-3 rounded-lg bg-accent/30">
@@ -89,7 +90,7 @@ export function AccountModal({ open, onClose }: Props) {
                   animate={{ opacity: [0.9, 1, 0.9] }}
                   transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
                 >
-                  ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  {formatCurrency(animatedEquity)}
                 </motion.p>
               </div>
             </div>
@@ -176,10 +177,10 @@ export function AccountModal({ open, onClose }: Props) {
                     {transactions.map((tx) => (
                       <div key={tx.id} className="grid grid-cols-4 gap-2 text-sm px-3 py-2 rounded-lg bg-accent/20">
                         <span className="text-xs text-muted-foreground">
-                          {new Date(tx.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                          {formatDate(tx.date)}
                         </span>
                         <span className={`text-xs font-bold ${tx.type === "DEPOSIT" ? "text-profit" : "text-loss"}`}>{tx.type}</span>
-                        <span className="text-right font-mono text-foreground">${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        <span className="text-right font-mono text-foreground">{formatCurrency(tx.amount)}</span>
                         <span className="text-right text-xs text-profit">{tx.status}</span>
                       </div>
                     ))}

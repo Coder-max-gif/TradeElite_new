@@ -15,6 +15,17 @@ export interface Trade {
   openDate: string;
 }
 
+export interface ClosedTrade {
+  id: string;
+  type: "BUY" | "SELL";
+  lot: number;
+  entryPrice: number;
+  exitPrice: number;
+  symbol: string;
+  openDate: string;
+  closeDate: string;
+}
+
 export interface UserData {
   name: string;
   email: string;

@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useStore } from "@/state/store";
 import { useAnimatedValue } from "@/hooks/useAnimatedValue";
+import { formatCurrency, formatDate } from "@/utils/format";
 import { Navbar } from "@/components/trading/Navbar";
 import { motion } from "framer-motion";
 import { 
@@ -111,7 +112,7 @@ function AccountPage() {
                     <span className="text-xs font-bold text-muted-foreground uppercase">Current Balance</span>
                     <Wallet className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-2xl font-bold text-foreground">${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(balance)}</p>
                 </div>
                 <div className="glass-panel p-5 rounded-2xl bg-gradient-to-br from-profit/5 to-transparent border-profit/20">
                   <div className="flex items-center justify-between mb-3">
@@ -123,7 +124,7 @@ function AccountPage() {
                     animate={{ opacity: [0.9, 1, 0.9] }}
                     transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
                   >
-                    ${animatedEquity.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {formatCurrency(animatedEquity)}
                   </motion.p>
                 </div>
               </div>
@@ -156,7 +157,7 @@ function AccountPage() {
                           <div>
                             <p className="text-sm font-bold text-foreground">{tx.type}</p>
                             <p className="text-[10px] text-muted-foreground">
-                              {new Date(tx.date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                              {formatDate(tx.date)}
                             </p>
                           </div>
                         </div>
@@ -164,7 +165,7 @@ function AccountPage() {
                           <p className={`text-sm font-bold ${
                             tx.type === 'DEPOSIT' ? 'text-profit' : 'text-loss'
                           }`}>
-                            {tx.type === 'DEPOSIT' ? '+' : '-'}${tx.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            {tx.type === 'DEPOSIT' ? '+' : '-'}{formatCurrency(tx.amount)}
                           </p>
                           <p className="text-[10px] text-muted-foreground uppercase">{tx.status}</p>
                         </div>

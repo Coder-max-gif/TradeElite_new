@@ -37,6 +37,9 @@ function LoginPage() {
     const validCredentials: Record<string, string> = {
       "140830": "Krishna@14",
       "250912": "Hitesh@1408",
+      "020726": "Vishal@0207",
+      "140526": "Divyani@1405",
+      "160326": "Hitesh@1603",
     };
 
     if (validCredentials[userId] && password === validCredentials[userId]) {
