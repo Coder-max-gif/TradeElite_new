@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { XAUUSD_BASE_PRICE } from "@/services/priceService";
+import { useStore } from "@/state/store";
 
 interface MarketItem {
   symbol: string;
@@ -10,8 +10,7 @@ interface MarketItem {
   spread: number;
 }
 
-const markets: MarketItem[] = [
-  { symbol: "OANDA:XAUUSD", name: "Gold", price: XAUUSD_BASE_PRICE, change: 1.42, spread: 0.3 },
+const otherMarkets: MarketItem[] = [
   { symbol: "OANDA:EURUSD", name: "Euro/Dollar", price: 1.0872, change: -0.15, spread: 0.1 },
   { symbol: "BITSTAMP:BTCUSD", name: "Bitcoin", price: 67520.00, change: 2.95, spread: 15.0 },
   { symbol: "NASDAQ:NDX", name: "NASDAQ 100", price: 18245.30, change: 0.65, spread: 1.2 },
@@ -25,6 +24,12 @@ interface Props {
 }
 
 export function MarketWatch({ selected, onSelect }: Props) {
+  const { currentPrice } = useStore();
+  const markets: MarketItem[] = [
+    { symbol: "OANDA:XAUUSD", name: "Gold", price: currentPrice, change: 1.42, spread: 0.3 },
+    ...otherMarkets,
+  ];
+
   return (
     <div className="glass-panel rounded-xl p-4 h-full flex flex-col glow-border-gold">
       <h3 className="text-xs font-semibold text-primary uppercase tracking-widest mb-4">
@@ -49,14 +54,6 @@ export function MarketWatch({ selected, onSelect }: Props) {
                   {m.symbol}
                 </p>
                 <p className="text-xs text-muted-foreground">{m.name}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-mono font-medium text-foreground">
-                  {m.price.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                </p>
-                <p className={`text-xs font-medium ${m.change >= 0 ? "text-profit" : "text-loss"}`}>
-                  {m.change >= 0 ? "+" : ""}{m.change}%
-                </p>
               </div>
             </div>
           </motion.button>

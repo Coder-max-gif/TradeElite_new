@@ -27,7 +27,6 @@ export function ActiveTrade() {
               <th className="pb-2 font-medium">Type</th>
               <th className="pb-2 font-medium text-right">Lot</th>
               <th className="pb-2 font-medium text-right">Entry</th>
-              <th className="pb-2 font-medium text-right">Current</th>
               <th className="pb-2 font-medium text-right">PnL</th>
             </tr>
           </thead>
@@ -44,15 +43,6 @@ export function ActiveTrade() {
                   </td>
                   <td className="py-2 text-right font-mono">{formatLots(trade.lot)}</td>
                   <td className="py-2 text-right font-mono">{formatPrice(trade.entryPrice)}</td>
-                  <td className="py-2 text-right font-mono">
-                    <motion.span
-                      key={formatPrice(currentPrice)}
-                      initial={{ opacity: 0.7 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      {formatPrice(currentPrice)}
-                    </motion.span>
-                  </td>
                   <td className="py-2 text-right font-mono">
                     <motion.span
                       key={Math.floor(pnl)}

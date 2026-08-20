@@ -1,7 +1,7 @@
 type PriceListener = (price: number) => void;
 
 /** Single source of truth for the simulated XAUUSD market level. */
-export const XAUUSD_BASE_PRICE = 4056.27;
+export const XAUUSD_BASE_PRICE = 4487.59;
 
 const POLL_INTERVAL_MS = 1500;
 const MICRO_NOISE_RANGE = 0.15; // +/- 0.075
