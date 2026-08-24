@@ -183,7 +183,7 @@ function AccountPage() {
               {/* Account Settings Shortcut */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {['Security Settings', 'Billing Details'].map((item) => (
-                  <button 
+                  <button
                     key={item}
                     className="flex items-center justify-between p-4 glass-panel rounded-xl hover:bg-muted/50 transition-all group"
                   >
@@ -192,6 +192,7 @@ function AccountPage() {
                   </button>
                 ))}
               </div>
+
             </div>
           </div>
         </div>

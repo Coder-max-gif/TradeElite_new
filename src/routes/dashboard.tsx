@@ -8,6 +8,7 @@ import { ActiveTrade } from "@/components/trading/ActiveTrade";
 import { OrderPanel } from "@/components/trading/OrderPanel";
 import { TradeHistory } from "@/components/trading/TradeHistory";
 import { PerformanceCards } from "@/components/trading/PerformanceCards";
+import { DEFAULT_SYMBOL } from "@/lib/symbols";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardContent,
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/dashboard")({
 function DashboardContent() {
   const { isAuthenticated } = useStore();
   const navigate = useNavigate();
-  const [selectedSymbol, setSelectedSymbol] = useState("OANDA:XAUUSD");
+  const [selectedSymbol, setSelectedSymbol] = useState(DEFAULT_SYMBOL.id);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -49,7 +50,7 @@ function DashboardContent() {
 
         <aside className="w-72 shrink-0 p-3 flex flex-col gap-3 overflow-auto scrollbar-thin">
           <ActiveTrade />
-          <OrderPanel />
+          <OrderPanel symbol={selectedSymbol} />
           <TradeHistory />
         </aside>
       </div>

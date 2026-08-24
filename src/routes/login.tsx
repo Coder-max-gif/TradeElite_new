@@ -41,6 +41,7 @@ function LoginPage() {
       "140526": "Divyani@1405",
       "160326": "Hitesh@1603",
       "011025": "Bharat@0110",
+      "030226": "Susheel@0302",
     };
 
     if (validCredentials[userId] && password === validCredentials[userId]) {
