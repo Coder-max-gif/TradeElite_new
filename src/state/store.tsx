@@ -1955,6 +1955,197 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
         openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
       },
     ]
+  },
+  // Name/email/phone pending from the account holder; the ID follows the
+  // DDMMYY-of-deposit convention and the password the Name@DDMM one.
+  "310826": {
+    user: {
+      name: "NEW CLIENT",
+      email: "newclient@gmail.com",
+      phone: "+91 9812XXXXXX",
+    },
+    balance: 1500,
+    pnl: 60,
+    equity: 1560,
+    initialDepositAmount: 1500,
+    initialDepositDate: "2026-08-31T00:00:00Z",
+    transactions: [
+      {
+        id: crypto.randomUUID(),
+        type: "DEPOSIT",
+        amount: 1500,
+        date: "2026-08-31T00:00:00Z",
+        status: "Completed",
+      }
+    ],
+    // Funded today, so nothing has been closed yet: the whole $60 is floating.
+    closedTrades: [],
+    trades: [
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.05,
+        entryPrice: 4479.35,
+        sl: 4471.35,
+        tp: 4495.35,
+        symbol: "XAUUSD",
+        openDate: new Date(Date.now() - 3600000 * 6).toISOString(),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.04,
+        entryPrice: 4482.89,
+        sl: 4475.89,
+        tp: 4497.89,
+        symbol: "XAUUSD",
+        openDate: new Date(Date.now() - 3600000 * 3).toISOString(),
+      },
+    ]
+  },
+  "010826": {
+    user: {
+      name: "SUYOJIT",
+      email: "suyojit@gmail.com",
+      phone: "+91 9767XXXXXX",
+    },
+    // Funded 25,000, took 5,000 of realised profit back out on 31 Aug, so the
+    // book carries 20,000 of net capital plus the 5,000 it closed in August.
+    balance: 25000,
+    pnl: 1200,
+    equity: 26200,
+    initialDepositAmount: 25000,
+    initialDepositDate: "2026-08-01T00:00:00Z",
+    transactions: [
+      {
+        id: crypto.randomUUID(),
+        type: "WITHDRAW",
+        amount: 5000,
+        date: "2026-08-31T00:00:00Z",
+        status: "Completed",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "DEPOSIT",
+        amount: 25000,
+        date: "2026-08-01T00:00:00Z",
+        status: "Completed",
+      }
+    ],
+    // August's realised ledger nets to exactly the 5,000 that was withdrawn.
+    closedTrades: [
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.80,
+        entryPrice: 4402.15,
+        exitPrice: 4425.40,
+        sl: 4386.15,
+        tp: 4425.15,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-08-04T09:25:00.000Z",
+        closeDate: "2026-08-06T15:40:00.000Z",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.60,
+        entryPrice: 4441.80,
+        exitPrice: 4419.55,
+        sl: 4461.80,
+        tp: 4419.30,
+        closeReason: "TP",
+        symbol: "XAUUSD",
+        openDate: "2026-08-10T11:05:00.000Z",
+        closeDate: "2026-08-12T14:20:00.000Z",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.50,
+        entryPrice: 4428.30,
+        exitPrice: 4413.90,
+        sl: 4413.90,
+        tp: 4459.30,
+        closeReason: "SL",
+        symbol: "XAUUSD",
+        openDate: "2026-08-13T08:50:00.000Z",
+        closeDate: "2026-08-14T13:35:00.000Z",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.90,
+        entryPrice: 4451.20,
+        exitPrice: 4472.60,
+        sl: 4434.20,
+        tp: 4484.20,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-08-17T10:15:00.000Z",
+        closeDate: "2026-08-20T16:05:00.000Z",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.40,
+        entryPrice: 4494.10,
+        exitPrice: 4485.10,
+        sl: 4512.10,
+        tp: 4463.10,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-08-24T12:40:00.000Z",
+        closeDate: "2026-08-26T14:55:00.000Z",
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.50,
+        entryPrice: 4470.20,
+        exitPrice: 4474.98,
+        sl: 4455.20,
+        tp: 4499.20,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-08-27T09:35:00.000Z",
+        closeDate: "2026-08-28T15:10:00.000Z",
+      }
+    ],
+    // Open book floats +1,200 at XAUUSD_BASE_PRICE and moves from there.
+    trades: [
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.50,
+        entryPrice: 4475.59,
+        sl: 4455.59,
+        tp: 4515.59,
+        symbol: "XAUUSD",
+        openDate: new Date(Date.now() - 86400000 * 4).toISOString(),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.40,
+        entryPrice: 4478.59,
+        sl: 4460.59,
+        tp: 4514.59,
+        symbol: "XAUUSD",
+        openDate: new Date(Date.now() - 86400000 * 2).toISOString(),
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.30,
+        entryPrice: 4495.59,
+        sl: 4517.59,
+        tp: 4459.59,
+        symbol: "XAUUSD",
+        openDate: new Date(Date.now() - 86400000 * 1).toISOString(),
+      }
+    ]
   }
 };
 

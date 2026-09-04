@@ -8,7 +8,20 @@ import { isOpenAt, marketStatus, type TradingHours } from "./marketHours";
  */
 
 export type Feed =
-  | { kind: "binance"; stream: string; restSymbol: string }
+  | {
+      kind: "binance";
+      stream: string;
+      restSymbol: string;
+      /**
+       * Step of the bridging walk that keeps the quote alive while the real
+       * tape is silent, in price units. Gold trades as PAXG, which prints only
+       * a handful of times a minute, so without this the price — and with it
+       * every open position and the order ticket — sits frozen for tens of
+       * seconds while the chart looks alive. Omit on instruments that print
+       * often enough never to go quiet.
+       */
+      quietStep?: number;
+    }
   | {
       kind: "simulated";
       basePrice: number;
@@ -60,7 +73,14 @@ export const SYMBOLS: SymbolSpec[] = [
     // 5-minute candles: PAXG prints only ~12 trades a minute, so a 1-minute
     // chart is a third empty bars, while 5m is dense and well formed.
     chartInterval: 300,
-    feed: { kind: "binance", stream: "paxgusdt@trade", restSymbol: "PAXGUSDT" },
+    // bookTicker, not @trade: PAXG's best bid/ask moves constantly while actual
+    // trades print roughly once a minute, so the book is the far livelier tape.
+    feed: {
+      kind: "binance",
+      stream: "paxgusdt@bookTicker",
+      restSymbol: "PAXGUSDT",
+      quietStep: 0.05,
+    },
   },
   {
     id: "BITSTAMP:BTCUSD",

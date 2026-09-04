@@ -12,6 +12,16 @@ const REST_POLL_MS = 10_000;
 /** Pull toward the anchor price each tick; keeps the walk from drifting away. */
 const MEAN_REVERSION = 0.02;
 
+/** How long the real tape may go silent before the bridging walk takes over. */
+const QUIET_AFTER_MS = 1200;
+const BRIDGE_TICK_MS = 500;
+/**
+ * The bridge is pulled back to the last real print much harder than the fully
+ * simulated walk is pulled to its anchor: it exists to keep the quote breathing
+ * between prints, never to invent a move the market did not make.
+ */
+const BRIDGE_MEAN_REVERSION = 0.12;
+
 /**
  * Optional live feed for gold and FX. Set VITE_TWELVEDATA_KEY in .env and the
  * simulated instruments switch to real quotes with no other code change.
@@ -37,6 +47,9 @@ interface Engine {
   closedByUs: boolean;
   /** Rolling window of recent prices, oldest first. */
   recent: number[];
+  /** Last price that came from the real feed, and when it arrived. */
+  realPrice: number;
+  lastRealAt: number;
 }
 
 const engines = new Map<string, Engine>();
@@ -63,6 +76,42 @@ function broadcast(engine: Engine, price: number, force = false) {
 
 // --- Live feeds -------------------------------------------------------------
 
+/**
+ * Price out of a Binance frame. @trade carries the traded price in `p`;
+ * @bookTicker carries best bid and ask in `b`/`a`, whose mid is the quote the
+ * rest of the app works in (the spec's own spread is applied on top).
+ */
+function binancePrice(data: unknown): number | null {
+  const frame = data as Record<string, string> | null;
+  if (!frame) return null;
+  if (frame.p !== undefined) {
+    const traded = parseFloat(frame.p);
+    return Number.isFinite(traded) ? traded : null;
+  }
+  if (frame.b !== undefined && frame.a !== undefined) {
+    const mid = (parseFloat(frame.b) + parseFloat(frame.a)) / 2;
+    return Number.isFinite(mid) ? mid : null;
+  }
+  return null;
+}
+
+/**
+ * Keeps an illiquid instrument's quote alive between real prints. It hovers
+ * around the last real price rather than walking away from it, and every real
+ * frame resets that anchor, so the bridge can never outrun the market. On a
+ * tape that prints often this never fires: a recent print short-circuits it.
+ */
+function bridgeTick(engine: Engine) {
+  const feed = engine.spec.feed;
+  if (feed.kind !== "binance" || !feed.quietStep) return;
+  if (engine.price <= 0) return;
+  if (Date.now() - engine.lastRealAt < QUIET_AFTER_MS) return;
+
+  const anchor = engine.realPrice > 0 ? engine.realPrice : engine.price;
+  const drift = (anchor - engine.price) * BRIDGE_MEAN_REVERSION;
+  broadcast(engine, engine.price + drift + gauss() * feed.quietStep);
+}
+
 function connectBinance(engine: Engine) {
   const feed = engine.spec.feed;
   if (feed.kind !== "binance") return;
@@ -72,8 +121,11 @@ function connectBinance(engine: Engine) {
   engine.closedByUs = false;
 
   socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    if (data?.p) broadcast(engine, parseFloat(data.p));
+    const price = binancePrice(JSON.parse(event.data));
+    if (price === null) return;
+    engine.realPrice = price;
+    engine.lastRealAt = Date.now();
+    broadcast(engine, price);
   };
 
   socket.onclose = () => {
@@ -128,6 +180,8 @@ async function seedBinancePrice(engine: Engine) {
     const json = await res.json();
     const price = parseFloat(json?.price);
     if (Number.isFinite(price) && price > 0 && engine.price <= 0) {
+      engine.realPrice = price;
+      engine.lastRealAt = Date.now();
       broadcast(engine, price, true);
     }
   } catch {
@@ -139,6 +193,9 @@ function startEngine(engine: Engine) {
   if (engine.spec.feed.kind === "binance") {
     void seedBinancePrice(engine);
     connectBinance(engine);
+    if (engine.spec.feed.quietStep) {
+      engine.timers.push(setInterval(() => bridgeTick(engine), BRIDGE_TICK_MS));
+    }
     return;
   }
 
@@ -176,6 +233,8 @@ function getEngine(symbol: string): Engine {
       timers: [],
       closedByUs: false,
       recent: [],
+      realPrice: 0,
+      lastRealAt: 0,
     };
     engines.set(spec.id, engine);
   }

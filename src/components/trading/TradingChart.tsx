@@ -25,6 +25,14 @@ interface Props {
 
 /** Bars of history to load. Paginated from the feed, so this can exceed one page. */
 const HISTORY_CANDLES = 4000;
+/**
+ * Bars actually in view once the chart opens. Fitting all HISTORY_CANDLES into
+ * the pane would draw each candle a fraction of a pixel wide — a smear rather
+ * than a chart. The rest stays loaded and is a scroll or a pinch away.
+ */
+const VISIBLE_CANDLES = 110;
+/** Empty bars kept to the right of the last candle, as MT5 and TradingView do. */
+const RIGHT_MARGIN_BARS = 8;
 
 const BUY_COLOR = "#2962FF";
 const SELL_COLOR = "#F23645";
@@ -65,8 +73,11 @@ export function TradingChart({ symbol }: Props) {
   const [loading, setLoading] = useState(true);
 
   // Rough price level for this instrument, used to scale the indicator's arrow
-  // offset so one config works from FX to Bitcoin.
-  const anchorPrice = spec.feed.kind === "simulated" ? spec.feed.basePrice : priceOf(spec.id) || 1000;
+  // offset so one config works from FX to Bitcoin. Deliberately quantised: on a
+  // live feed this is the ticking price, and it gates the history-load effect
+  // below, which would otherwise refetch the whole chart on every tick.
+  const livePrice = spec.feed.kind === "simulated" ? spec.feed.basePrice : priceOf(spec.id) || 1000;
+  const anchorPrice = Math.round(livePrice / 100) * 100 || 1000;
 
   const restricted = user.name === "HITESH";
 
@@ -90,6 +101,11 @@ export function TradingChart({ symbol }: Props) {
         borderColor: "rgba(255,255,255,0.08)",
         timeVisible: true,
         secondsVisible: false,
+        barSpacing: 8,
+        rightOffset: RIGHT_MARGIN_BARS,
+        // Well below the default so the whole 4000-bar history is still
+        // reachable by zooming out.
+        minBarSpacing: 0.05,
       },
       autoSize: true,
     });
@@ -159,7 +175,11 @@ export function TradingChart({ symbol }: Props) {
       };
       candlesRef.current = candles;
       setSignals(scalperRef.current?.calculate(candles) ?? []);
-      chartRef.current?.timeScale().fitContent();
+      // Open on the recent tape rather than the whole history.
+      chartRef.current?.timeScale().setVisibleLogicalRange({
+        from: Math.max(0, candles.length - VISIBLE_CANDLES),
+        to: candles.length + RIGHT_MARGIN_BARS,
+      });
       setLoading(false);
     });
 
