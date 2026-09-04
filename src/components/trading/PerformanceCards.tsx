@@ -51,19 +51,19 @@ export function PerformanceCards() {
   ];
 
   return (
-    <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
       {stats.map((s, i) => (
         <motion.div
           key={s.label}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.05 }}
-          className="glass-panel rounded-xl p-3 text-center glow-border-gold"
+          className="glass-panel rounded-xl p-2.5 sm:p-3 text-center glow-border-gold min-w-0"
         >
           <p className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">
             {s.label}
           </p>
-          <p className={`text-lg font-bold font-mono truncate ${s.color}`}>{s.value}</p>
+          <p className={`text-base sm:text-lg font-bold font-mono tabular-nums truncate ${s.color}`}>{s.value}</p>
         </motion.div>
       ))}
     </div>

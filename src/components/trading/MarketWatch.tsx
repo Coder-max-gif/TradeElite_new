@@ -6,11 +6,17 @@ import { SYMBOLS, askPrice, bidPrice, symbolStatus } from "@/lib/symbols";
 interface Props {
   selected: string;
   onSelect: (symbol: string) => void;
+  /**
+   * "list" is the desktop sidebar column. "strip" lays the same quotes out as
+   * a horizontally scrolling row for the phone layout, where a full-height
+   * vertical watchlist would push the chart off the screen.
+   */
+  variant?: "list" | "strip";
 }
 
 type Direction = "up" | "down" | "flat";
 
-export function MarketWatch({ selected, onSelect }: Props) {
+export function MarketWatch({ selected, onSelect, variant = "list" }: Props) {
   const { prices, priceOf, now } = useStore();
 
   // Colour each quote by the direction of its last change, the way a real
@@ -29,6 +35,61 @@ export function MarketWatch({ selected, onSelect }: Props) {
     }
     setDirections((current) => ({ ...current, ...next }));
   }, [prices]);
+
+  if (variant === "strip") {
+    return (
+      <div className="-mx-3 px-3">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar touch-scroll snap-x snap-mandatory pb-1">
+          {SYMBOLS.map((spec) => {
+            const mid = priceOf(spec.id);
+            const direction = directions[spec.id] ?? "flat";
+            const isSelected = selected === spec.id;
+            const open = symbolStatus(spec.id, new Date(now)).open;
+
+            return (
+              <button
+                key={spec.id}
+                onClick={() => onSelect(spec.id)}
+                className={`snap-start shrink-0 min-w-[112px] text-left px-3 py-2 rounded-xl border transition-colors ${
+                  isSelected
+                    ? "bg-primary/10 border-primary/40"
+                    : "bg-accent/20 border-transparent active:bg-accent/50"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`text-xs font-semibold truncate ${
+                      isSelected ? "text-primary" : "text-foreground"
+                    }`}
+                  >
+                    {spec.display}
+                  </span>
+                  {!open && (
+                    <span className="text-[8px] font-bold text-loss border border-loss/30 rounded px-1 shrink-0">
+                      CLD
+                    </span>
+                  )}
+                </div>
+                <p
+                  className={`text-sm font-mono font-bold tabular-nums ${
+                    !open
+                      ? "text-muted-foreground"
+                      : direction === "up"
+                        ? "text-profit"
+                        : direction === "down"
+                          ? "text-loss"
+                          : "text-foreground"
+                  }`}
+                >
+                  {mid > 0 ? mid.toFixed(spec.digits) : "—"}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-panel rounded-xl p-4 h-full flex flex-col glow-border-gold">

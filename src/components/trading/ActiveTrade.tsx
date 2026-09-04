@@ -55,7 +55,7 @@ export function ActiveTrade() {
           {trades.length > 0 && anyClosable && (
             <button
               onClick={closeAllTrades}
-              className="text-[10px] font-bold px-2 py-0.5 rounded bg-loss/15 text-loss hover:bg-loss/25 transition-colors"
+              className="text-[10px] font-bold px-3 py-3.5 sm:px-2 sm:py-0.5 rounded bg-loss/15 text-loss hover:bg-loss/25 transition-colors"
             >
               CLOSE ALL
             </button>
@@ -73,7 +73,7 @@ export function ActiveTrade() {
       ) : (
         // Two lines per position: the sidebar is too narrow for a table wide
         // enough to hold symbol, lots, both prices and P/L without colliding.
-        <div className="flex flex-col gap-1.5 max-h-64 overflow-auto scrollbar-thin">
+        <div className="flex flex-col gap-1.5 max-h-[52vh] sm:max-h-64 overflow-auto touch-scroll scrollbar-thin">
           {trades.map((trade) => {
             const spec = getSpec(trade.symbol);
             // Value on the mid, exactly as the store totals it, so these rows
@@ -128,7 +128,7 @@ export function ActiveTrade() {
                       }
                       disabled={!closable}
                       title={closable ? "Edit stop loss / take profit" : "Market closed"}
-                      className="p-0.5 rounded hover:bg-primary/20 text-muted-foreground hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
+                      className="grid place-items-center h-11 w-11 sm:h-6 sm:w-6 -my-2.5 sm:my-0 rounded hover:bg-primary/20 text-muted-foreground hover:text-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
                     >
                       <Pencil className="w-3 h-3" />
                     </button>
@@ -136,7 +136,7 @@ export function ActiveTrade() {
                       onClick={() => closeTrade(trade.id)}
                       disabled={!closable}
                       title={closable ? "Close position" : "Market closed"}
-                      className="p-0.5 rounded hover:bg-loss/20 text-muted-foreground hover:text-loss transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
+                      className="grid place-items-center h-11 w-11 sm:h-6 sm:w-6 -my-2.5 sm:my-0 rounded hover:bg-loss/20 text-muted-foreground hover:text-loss transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -198,13 +198,13 @@ export function ActiveTrade() {
                         <div className="flex gap-1.5">
                           <button
                             onClick={() => saveEdit(trade.id)}
-                            className="flex-1 py-1 rounded bg-primary/20 text-primary text-[10px] font-bold hover:bg-primary/30 transition-colors"
+                            className="flex-1 py-2 sm:py-1 rounded bg-primary/20 text-primary text-[10px] font-bold hover:bg-primary/30 transition-colors"
                           >
                             SAVE
                           </button>
                           <button
                             onClick={() => setEditing(null)}
-                            className="px-3 py-1 rounded bg-accent text-muted-foreground text-[10px] font-bold hover:text-foreground transition-colors"
+                            className="px-4 py-2 sm:py-1 rounded bg-accent text-muted-foreground text-[10px] font-bold hover:text-foreground transition-colors"
                           >
                             CANCEL
                           </button>

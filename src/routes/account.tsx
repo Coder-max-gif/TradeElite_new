@@ -39,10 +39,10 @@ function AccountPage() {
     <div className="min-h-screen bg-background flex flex-col overflow-hidden">
       <Navbar />
       
-      <main className="flex-1 overflow-auto scrollbar-thin p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <main className="flex-1 overflow-auto touch-scroll scrollbar-thin p-4 sm:p-6 pb-safe px-safe">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between gap-2 mb-5 sm:mb-8">
             <Link 
               to="/dashboard" 
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors group"
@@ -58,9 +58,9 @@ function AccountPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {/* User Profile Card */}
-            <div className="md:col-span-1 space-y-6">
+            <div className="md:col-span-1 space-y-4 sm:space-y-6">
               <div className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center space-y-4 glow-border-gold">
                 <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center relative group overflow-hidden">
                   <User className="w-12 h-12 text-primary" />
@@ -75,7 +75,7 @@ function AccountPage() {
                 <div className="w-full pt-4 border-t border-border space-y-3">
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <Mail className="w-4 h-4 text-primary/60" />
-                    <span className="truncate">{user.email}</span>
+                    <span className="truncate min-w-0">{user.email}</span>
                   </div>
                   <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <Phone className="w-4 h-4 text-primary/60" />
@@ -104,7 +104,7 @@ function AccountPage() {
             </div>
 
             {/* Financial Info & Transactions */}
-            <div className="md:col-span-2 space-y-6">
+            <div className="md:col-span-2 space-y-4 sm:space-y-6">
               {/* Financial Summary Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="glass-panel p-5 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
@@ -112,7 +112,7 @@ function AccountPage() {
                     <span className="text-xs font-bold text-muted-foreground uppercase">Current Balance</span>
                     <Wallet className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-2xl font-bold text-foreground">{formatCurrency(balance)}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-foreground tabular-nums">{formatCurrency(balance)}</p>
                 </div>
                 <div className="glass-panel p-5 rounded-2xl bg-gradient-to-br from-profit/5 to-transparent border-profit/20">
                   <div className="flex items-center justify-between mb-3">
@@ -120,7 +120,7 @@ function AccountPage() {
                     <ShieldCheck className="w-4 h-4 text-profit" />
                   </div>
                   <motion.p
-                    className="text-2xl font-bold text-foreground"
+                    className="text-xl sm:text-2xl font-bold text-foreground tabular-nums"
                     animate={{ opacity: [0.9, 1, 0.9] }}
                     transition={{ duration: 2.2, repeat: Infinity, repeatType: "mirror" }}
                   >
@@ -148,8 +148,8 @@ function AccountPage() {
                         key={tx.id} 
                         className="p-4 flex items-center justify-between hover:bg-muted/20 transition-colors"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center ${
                             tx.type === 'DEPOSIT' ? 'bg-profit/10 text-profit' : 'bg-loss/10 text-loss'
                           }`}>
                             <Clock className="w-4 h-4" />
@@ -161,8 +161,8 @@ function AccountPage() {
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className={`text-sm font-bold ${
+                        <div className="text-right shrink-0 pl-2">
+                          <p className={`text-sm font-bold tabular-nums ${
                             tx.type === 'DEPOSIT' ? 'text-profit' : 'text-loss'
                           }`}>
                             {tx.type === 'DEPOSIT' ? '+' : '-'}{formatCurrency(tx.amount)}

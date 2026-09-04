@@ -82,7 +82,7 @@ export function OrderPanel({ symbol }: Props) {
       <div className="grid grid-cols-2 gap-2 mb-4">
         <button
           onClick={() => setOrderType("SELL")}
-          className={`rounded-lg py-2 px-2 text-left transition-all ${
+          className={`rounded-lg py-2.5 sm:py-2 px-2 text-left transition-all ${
             orderType === "SELL"
               ? "bg-loss/15 border border-loss/40"
               : "bg-accent/40 border border-transparent hover:bg-accent/60"
@@ -93,7 +93,7 @@ export function OrderPanel({ symbol }: Props) {
         </button>
         <button
           onClick={() => setOrderType("BUY")}
-          className={`rounded-lg py-2 px-2 text-right transition-all ${
+          className={`rounded-lg py-2.5 sm:py-2 px-2 text-right transition-all ${
             orderType === "BUY"
               ? "bg-profit/15 border border-profit/40"
               : "bg-accent/40 border border-transparent hover:bg-accent/60"
@@ -110,7 +110,7 @@ export function OrderPanel({ symbol }: Props) {
           <div className="flex items-center gap-1">
             <button
               onClick={() => stepLot(-LOT_STEP)}
-              className="w-8 h-9 rounded-lg bg-accent text-muted-foreground hover:text-foreground text-lg leading-none"
+              className="shrink-0 w-11 h-11 sm:w-8 sm:h-9 rounded-lg bg-accent text-muted-foreground hover:text-foreground text-xl sm:text-lg leading-none"
             >
               −
             </button>
@@ -119,11 +119,11 @@ export function OrderPanel({ symbol }: Props) {
               inputMode="decimal"
               value={lotSize}
               onChange={(e) => setLotSize(e.target.value)}
-              className="flex-1 min-w-0 bg-input border border-border rounded-lg px-3 py-2 text-sm font-mono text-center text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex-1 min-w-0 bg-input border border-border rounded-lg px-3 py-3 sm:py-2 text-sm font-mono text-center text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               onClick={() => stepLot(LOT_STEP)}
-              className="w-8 h-9 rounded-lg bg-accent text-muted-foreground hover:text-foreground text-lg leading-none"
+              className="shrink-0 w-11 h-11 sm:w-8 sm:h-9 rounded-lg bg-accent text-muted-foreground hover:text-foreground text-xl sm:text-lg leading-none"
             >
               +
             </button>
@@ -139,7 +139,7 @@ export function OrderPanel({ symbol }: Props) {
               placeholder="none"
               value={stopLoss}
               onChange={(e) => setStopLoss(e.target.value)}
-              className="w-full bg-input border border-border rounded-lg px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-input border border-border rounded-lg px-3 py-3 sm:py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
           <div>
@@ -150,7 +150,7 @@ export function OrderPanel({ symbol }: Props) {
               placeholder="none"
               value={takeProfit}
               onChange={(e) => setTakeProfit(e.target.value)}
-              className="w-full bg-input border border-border rounded-lg px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-input border border-border rounded-lg px-3 py-3 sm:py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
         </div>

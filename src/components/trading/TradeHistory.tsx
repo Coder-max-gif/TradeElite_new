@@ -34,7 +34,7 @@ export function TradeHistory() {
           Closed trades will appear here.
         </p>
       ) : (
-        <div className="space-y-2 max-h-72 overflow-auto scrollbar-thin">
+        <div className="space-y-2 max-h-[70vh] sm:max-h-72 overflow-auto touch-scroll scrollbar-thin">
           {history.map((t) => {
             const spec = getSpec(t.symbol);
             const profit = calculateClosedTradePnL(t);

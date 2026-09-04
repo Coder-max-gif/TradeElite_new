@@ -17,6 +17,7 @@ import {
 import { subscribeToPrice, fetchHistory, isLiveFeed } from "@/services/priceService";
 import { useStore } from "@/state/store";
 import { getSpec, symbolStatus } from "@/lib/symbols";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ScalperLiteCalculator, type Candle, type Signal } from "@/lib/indicators/scalperLite";
 
 interface Props {
@@ -29,8 +30,18 @@ const HISTORY_CANDLES = 4000;
  * Bars actually in view once the chart opens. Fitting all HISTORY_CANDLES into
  * the pane would draw each candle a fraction of a pixel wide — a smear rather
  * than a chart. The rest stays loaded and is a scroll or a pinch away.
+ *
+ * A phone gets far fewer: 110 candles across a 320px pane is under 3px each,
+ * which is the same smear one breakpoint down. The rest is still a pinch away.
  */
-const VISIBLE_CANDLES = 110;
+const VISIBLE_CANDLES_DESKTOP = 110;
+const VISIBLE_CANDLES_MOBILE = 45;
+const MOBILE_BREAKPOINT = 640;
+const NARROW_QUERY = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
+
+function visibleCandles(width: number) {
+  return width < MOBILE_BREAKPOINT ? VISIBLE_CANDLES_MOBILE : VISIBLE_CANDLES_DESKTOP;
+}
 /** Empty bars kept to the right of the last candle, as MT5 and TradingView do. */
 const RIGHT_MARGIN_BARS = 8;
 
@@ -80,6 +91,7 @@ export function TradingChart({ symbol }: Props) {
   const anchorPrice = Math.round(livePrice / 100) * 100 || 1000;
 
   const restricted = user.name === "HITESH";
+  const isNarrow = useMediaQuery(NARROW_QUERY);
 
   // --- Chart construction (once per mount) ---
   useEffect(() => {
@@ -96,13 +108,24 @@ export function TradingChart({ symbol }: Props) {
         horzLines: { color: "rgba(255,255,255,0.04)" },
       },
       crosshair: { mode: CrosshairMode.Normal },
-      rightPriceScale: { borderColor: "rgba(255,255,255,0.08)" },
+      rightPriceScale: {
+        borderColor: "rgba(255,255,255,0.08)",
+        // The default 10%/10% margins waste vertical space that a phone pane
+        // does not have to spare.
+        scaleMargins: { top: 0.12, bottom: 0.12 },
+      },
+      // Vertical touch-drag on the price scale fights the page scroll on a
+      // phone; horizontal pan and pinch zoom are the gestures that matter.
+      handleScroll: { vertTouchDrag: false },
+      handleScale: { axisPressedMouseMove: { time: true, price: false } },
       timeScale: {
         borderColor: "rgba(255,255,255,0.08)",
         timeVisible: true,
         secondsVisible: false,
         barSpacing: 8,
         rightOffset: RIGHT_MARGIN_BARS,
+        // A finger drag on the time axis should pan the chart, not select it.
+        fixLeftEdge: false,
         // Well below the default so the whole 4000-bar history is still
         // reachable by zooming out.
         minBarSpacing: 0.05,
@@ -175,9 +198,11 @@ export function TradingChart({ symbol }: Props) {
       };
       candlesRef.current = candles;
       setSignals(scalperRef.current?.calculate(candles) ?? []);
-      // Open on the recent tape rather than the whole history.
+      // Open on the recent tape rather than the whole history, with the window
+      // sized to the pane so candles stay readable on a phone.
+      const width = containerRef.current?.clientWidth ?? MOBILE_BREAKPOINT;
       chartRef.current?.timeScale().setVisibleLogicalRange({
-        from: Math.max(0, candles.length - VISIBLE_CANDLES),
+        from: Math.max(0, candles.length - visibleCandles(width)),
         to: candles.length + RIGHT_MARGIN_BARS,
       });
       setLoading(false);
@@ -284,7 +309,9 @@ export function TradingChart({ symbol }: Props) {
           lineWidth: 1,
           lineStyle: LineStyle.Dashed,
           axisLabelVisible: true,
-          title: `${trade.type} ${trade.lot.toFixed(2)} @ ${trade.entryPrice.toFixed(spec.digits)}`,
+          title: isNarrow
+            ? `${trade.type} ${trade.lot.toFixed(2)}`
+            : `${trade.type} ${trade.lot.toFixed(2)} @ ${trade.entryPrice.toFixed(spec.digits)}`,
         })
       );
 
@@ -314,7 +341,7 @@ export function TradingChart({ symbol }: Props) {
         );
       }
     }
-  }, [trades, spec.id, spec.digits, restricted, loading]);
+  }, [trades, spec.id, spec.digits, restricted, loading, isNarrow]);
 
   return (
     <div className="glass-panel rounded-xl flex flex-col h-full glow-border-gold overflow-hidden relative">

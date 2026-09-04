@@ -23,13 +23,13 @@ function HomePage() {
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 group">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 h-16 flex items-center justify-between gap-2 px-safe">
+          <div className="flex items-center gap-4 lg:gap-8 min-w-0">
+            <Link to="/" className="flex items-center gap-2 group min-w-0">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center group-hover:rotate-6 transition-transform">
                 <span className="text-primary-foreground font-bold text-sm">FX</span>
               </div>
-              <span className="text-foreground font-bold text-xl tracking-tight">TradeElite</span>
+              <span className="text-foreground font-bold text-lg sm:text-xl tracking-tight truncate">TradeElite</span>
             </Link>
             
             <div className="hidden md:flex items-center gap-6">
@@ -41,13 +41,13 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link to="/login" className="text-sm font-medium hover:text-primary transition-colors">
               Login
             </Link>
             <Link 
               to="/login" 
-              className="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 transition-all hover:scale-105"
+              className="px-3.5 sm:px-5 py-2 rounded-full bg-primary text-primary-foreground text-xs sm:text-sm font-bold hover:bg-primary/90 transition-all hover:scale-105 whitespace-nowrap"
             >
               Open Account
             </Link>
@@ -56,7 +56,7 @@ function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative pt-28 pb-14 sm:pt-32 sm:pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         {/* Background Image Overlay */}
         <div className="absolute inset-0 -z-20">
           <img 
@@ -114,11 +114,11 @@ function HomePage() {
               <span className="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20 tracking-wider uppercase mb-6 inline-block">
                 Premium Funded Trading
               </span>
-              <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent leading-[1.1]">
+              <h1 className="text-[2rem] leading-[1.12] sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-5 sm:mb-6 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent leading-[1.1]">
                 Trade the world's <br />
                 <span className="text-primary">financial markets</span>
               </h1>
-              <p className="text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed">
                 Experience professional trading with high-leverage, deep liquidity, and a platform built for elite performance. Join 1M+ traders worldwide.
               </p>
               

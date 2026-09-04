@@ -56,13 +56,13 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-background flex flex-col items-center justify-center p-4 py-20 sm:py-4 relative overflow-hidden pt-safe pb-safe">
       {/* Background Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] rounded-full -z-10" />
       
       <Link 
         to="/" 
-        className="absolute top-8 left-8 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
+        className="absolute top-5 left-4 sm:top-8 sm:left-8 flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group"
       >
         <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Back to Home
@@ -73,15 +73,15 @@ function LoginPage() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="text-center mb-10">
+        <div className="text-center mb-7 sm:mb-10">
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
             <span className="text-primary-foreground font-bold text-lg">FX</span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome Back</h1>
           <p className="text-muted-foreground mt-2 text-sm">Access your TradeElite elite terminal</p>
         </div>
 
-        <div className="glass-panel p-8 rounded-3xl border border-white/5 shadow-2xl relative">
+        <div className="glass-panel p-5 sm:p-8 rounded-3xl border border-white/5 shadow-2xl relative">
           <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
           
           <AnimatePresence>
@@ -106,7 +106,11 @@ function LoginPage() {
                   <User className="w-4 h-4" />
                 </div>
                 <input 
-                  type="text" 
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
                   placeholder="Enter your ID"
@@ -126,7 +130,10 @@ function LoginPage() {
                   <Lock className="w-4 h-4" />
                 </div>
                 <input 
-                  type={showPassword ? "text" : "password"} 
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -136,7 +143,7 @@ function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-primary transition-colors"
+                  className="absolute inset-y-0 right-0 w-11 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -164,7 +171,7 @@ function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-border/50 text-center">
+          <div className="mt-6 pt-6 sm:mt-8 sm:pt-8 border-t border-border/50 text-center">
             <p className="text-xs text-muted-foreground">
               Don't have an account? 
               <Link to="/" className="text-primary font-bold ml-1 hover:underline">Start Free Evaluation</Link>
