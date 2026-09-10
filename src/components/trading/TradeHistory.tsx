@@ -21,7 +21,7 @@ export function TradeHistory() {
   );
 
   return (
-    <div className="glass-panel rounded-xl p-4 glow-border-gold">
+    <div className="glass-panel rounded-xl p-4 glow-border-gold shrink-0">
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs font-semibold text-primary uppercase tracking-widest">
           Trade History

@@ -51,7 +51,7 @@ export function PerformanceCards() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 shrink-0">
       {stats.map((s, i) => (
         <motion.div
           key={s.label}

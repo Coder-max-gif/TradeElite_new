@@ -72,7 +72,7 @@ export function OrderPanel({ symbol }: Props) {
   };
 
   return (
-    <div className="glass-panel rounded-xl p-4 glow-border-gold relative overflow-hidden">
+    <div className="glass-panel rounded-xl p-4 glow-border-gold relative overflow-hidden shrink-0">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-xs font-semibold text-primary uppercase tracking-widest">Order</h3>
         <span className="text-xs font-mono text-muted-foreground">{spec.display}</span>

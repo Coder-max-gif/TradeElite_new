@@ -46,7 +46,7 @@ export function ActiveTrade() {
   const isPositive = animatedFloatingPnL >= 0;
 
   return (
-    <div className="glass-panel rounded-xl p-4 glow-border-profit overflow-hidden flex flex-col gap-4">
+    <div className="glass-panel rounded-xl p-4 glow-border-profit overflow-hidden shrink-0 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xs font-semibold text-primary uppercase tracking-widest">
           Open Positions
@@ -143,7 +143,7 @@ export function ActiveTrade() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 mt-1 text-[10px] font-mono text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-1 text-[10px] font-mono text-muted-foreground">
                   <span>{trade.entryPrice.toFixed(spec.digits)}</span>
                   <span className="opacity-50">→</span>
                   <span className="text-foreground/70">{mid.toFixed(spec.digits)}</span>
