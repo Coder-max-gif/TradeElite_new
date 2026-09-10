@@ -44,6 +44,11 @@ function LoginPage() {
       "030226": "Susheel@0302",
       "310826": "Client@3108",
       "010826": "Suyojit@0108",
+      // Both Sunita More's, funded 01 Sep 2026; the second book is keyed on its
+      // 10 Sep statement date because 010926 was already taken, and its password
+      // follows that id the way every other pair here does.
+      "010926": "Sunita@0109",
+      "100926": "Sunita@1009",
     };
 
     if (validCredentials[userId] && password === validCredentials[userId]) {
