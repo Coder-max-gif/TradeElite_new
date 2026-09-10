@@ -2150,7 +2150,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
   // --- September 2026 intake -------------------------------------------------
   // Both funded on 01 Sep 2026, so the DDMMYY-of-deposit id convention collides:
   // the 10,000 book keeps 010926 and the 5,000 book takes 100926, the date its
-  // statement is drawn to. Both books belong to the same holder, Sunita More,
+  // statement is drawn to. Both books belong to the same holder, Karuna More,
   // so they share an identity and differ only in size and mandate.
   //
   // Every closed trade below is priced off the REAL gold tape for 01-09 Sep 2026
@@ -2168,8 +2168,8 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
   // hit sits outside it, and every SL exit sits on a level the day did trade.
   "010926": {
     user: {
-      name: "SUNITA MORE",
-      email: "sunitamore@gmail.com",
+      name: "KARUNA MORE",
+      email: "010926@gmail.com",
       phone: "+91 9702XXXXXX",
     },
     balance: 10000,
@@ -2317,8 +2317,8 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
   },
   "100926": {
     user: {
-      name: "SUNITA MORE",
-      email: "sunitamore@gmail.com",
+      name: "KARUNA MORE",
+      email: "010926@gmail.com",
       phone: "+91 9702XXXXXX",
     },
     balance: 5000,
