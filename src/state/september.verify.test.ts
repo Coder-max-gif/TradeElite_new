@@ -10,13 +10,14 @@ import { XAUUSD_BASE_PRICE } from "@/services/priceService";
 import { isSymbolOpen } from "@/lib/symbols";
 
 /**
- * Real PAXGUSDT daily bars for 01–10 Sep 2026 — the same feed XAUUSD streams
+ * Real PAXGUSDT daily bars for 01–16 Sep 2026 — the same feed XAUUSD streams
  * from, so these are the prices gold actually traded at. Both September books
  * are authored against them, and this file is what holds them to it: an entry
  * or exit outside the day's real range, or a stop the day would have taken out
  * before the trade was closed by hand, fails here.
  *
- * 05–06 Sep is the weekend, which the forex session closes, so it has no bar.
+ * 05–06 and 12–13 Sep are weekends, which the forex session closes, so they
+ * have no bar.
  */
 const BARS: Record<string, { o: number; h: number; l: number; c: number }> = {
   "2026-09-01": { o: 4451.13, h: 4460.77, l: 4335.23, c: 4337.89 },
@@ -26,15 +27,19 @@ const BARS: Record<string, { o: number; h: number; l: number; c: number }> = {
   "2026-09-07": { o: 4421.1, h: 4427.77, l: 4383.85, c: 4423.43 },
   "2026-09-08": { o: 4424.45, h: 4442.99, l: 4350.0, c: 4354.48 },
   "2026-09-09": { o: 4354.49, h: 4433.72, l: 4347.11, c: 4395.04 },
-  "2026-09-10": { o: 4394.0, h: 4433.0, l: 4391.01, c: 4407.11 },
+  "2026-09-10": { o: 4394.0, h: 4433.0, l: 4318.04, c: 4320.03 },
+  "2026-09-11": { o: 4320.24, h: 4405.02, l: 4302.0, c: 4356.1 },
+  "2026-09-14": { o: 4336.3, h: 4359.25, l: 4265.44, c: 4294.99 },
+  "2026-09-15": { o: 4294.93, h: 4319.5, l: 4266.67, c: 4286.3 },
+  "2026-09-16": { o: 4287.08, h: 4346.85, l: 4281.67, c: 4334.0 },
 };
 
 /** Where gold was when the books were written; the basis the re-anchor shifts from. */
-const LIVE = BARS["2026-09-10"].c;
+const LIVE = BARS["2026-09-16"].c;
 
 const BOOKS = [
-  { id: "010926", deposit: 10000, profit: 650, realised: 560, floating: 90 },
-  { id: "100926", deposit: 5000, profit: 500, realised: 430, floating: 70 },
+  { id: "010926", deposit: 10000, profit: 930, realised: 840, floating: 90 },
+  { id: "100926", deposit: 5000, profit: 620, realised: 550, floating: 70 },
 ];
 
 // A plain loop rather than describe.each: bun:test ships no type declarations

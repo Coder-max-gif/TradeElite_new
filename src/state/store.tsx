@@ -2153,7 +2153,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
   // statement is drawn to. Both books belong to the same holder, Karuna More,
   // so they share an identity and differ only in size and mandate.
   //
-  // Every closed trade below is priced off the REAL gold tape for 01-09 Sep 2026
+  // Every closed trade below is priced off the REAL gold tape for 01-16 Sep 2026
   // (Binance PAXGUSDT daily bars, the same feed XAUUSD streams from):
   //   01 Sep  O 4451.13  H 4460.77  L 4335.23  C 4337.89
   //   02 Sep  O 4337.48  H 4405.35  L 4286.97  C 4394.57
@@ -2162,10 +2162,15 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
   //   07 Sep  O 4421.10  H 4427.77  L 4383.85  C 4423.43
   //   08 Sep  O 4424.45  H 4442.99  L 4350.00  C 4354.48
   //   09 Sep  O 4354.49  H 4433.72  L 4347.11  C 4395.04
-  //   10 Sep  O 4394.00  H 4433.00  L 4391.01     4407.11 (live)
-  // 05-06 Sep is the weekend and is closed, so nothing trades across it. Entries
-  // sit inside the real range of the day they filled, every stop that was NOT
-  // hit sits outside it, and every SL exit sits on a level the day did trade.
+  //   10 Sep  O 4394.00  H 4433.00  L 4318.04  C 4320.03
+  //   11 Sep  O 4320.24  H 4405.02  L 4302.00  C 4356.10
+  //   14 Sep  O 4336.30  H 4359.25  L 4265.44  C 4294.99
+  //   15 Sep  O 4294.93  H 4319.50  L 4266.67  C 4286.30
+  //   16 Sep  O 4287.08  H 4346.85  L 4281.67     4334.00 (live)
+  // 05-06 and 12-13 Sep are weekends and are closed, so nothing trades across
+  // them. Entries sit inside the real range of the day they filled, every stop
+  // that was NOT hit sits outside it, and every SL exit sits on a level the day
+  // did trade.
   "010926": {
     user: {
       name: "KARUNA MORE",
@@ -2174,7 +2179,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
     },
     balance: 10000,
     pnl: 90,
-    equity: 10650,
+    equity: 10930,
     initialDepositAmount: 10000,
     initialDepositDate: "2026-09-01T00:00:00Z",
     transactions: [
@@ -2186,7 +2191,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
         status: "Completed",
       }
     ],
-    // Seven closed trades = exactly +560.00 realised, so balance = 10,560.00.
+    // Twelve closed trades = exactly +840.00 realised, so balance = 10,840.00.
     closedTrades: [
       {
         // Sold the 01 Sep break: a 4451 open unwound to a 4337 close.
@@ -2286,32 +2291,109 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
         openDate: "2026-09-09T12:40:00.000Z",
         closeDate: "2026-09-09T18:15:00.000Z",
       },
+      {
+        // 10 Sep rolled over at 4433.00 and fell all day; short from the
+        // morning fade, covered into the 12:00 UTC flush to 4330.00.
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.03,
+        entryPrice: 4408.50,
+        exitPrice: 4341.00,
+        sl: 4445.00,
+        tp: 4310.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-10T07:20:00.000Z",
+        closeDate: "2026-09-10T12:50:00.000Z",
+      },
+      {
+        // Bought the 11 Sep basing action; the 12:00 UTC spike out of 4302.00
+        // ran to 4405.02 and the position was banked on the way up.
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.03,
+        entryPrice: 4318.60,
+        exitPrice: 4383.10,
+        sl: 4295.00,
+        tp: 4415.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-11T03:35:00.000Z",
+        closeDate: "2026-09-11T12:40:00.000Z",
+      },
+      {
+        // The week's one real hit: 14 Sep broke 4300 and ran to 4265.44,
+        // taking the stop out on the way.
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.05,
+        entryPrice: 4330.00,
+        exitPrice: 4284.00,
+        sl: 4284.00,
+        tp: 4380.00,
+        closeReason: "SL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-14T05:50:00.000Z",
+        closeDate: "2026-09-14T12:35:00.000Z",
+      },
+      {
+        // Traded 15 Sep with the trend instead: short the 4319.50 high,
+        // covered into the 4266.67 morning low.
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.04,
+        entryPrice: 4312.40,
+        exitPrice: 4291.90,
+        sl: 4330.00,
+        tp: 4260.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-15T03:25:00.000Z",
+        closeDate: "2026-09-15T06:40:00.000Z",
+      },
+      {
+        // Small long off the 16 Sep 4281.67 low, taken off early in the
+        // 02:00 UTC ramp that carried gold to 4346.85.
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.02,
+        entryPrice: 4292.00,
+        exitPrice: 4308.00,
+        sl: 4275.00,
+        tp: 4360.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-16T01:15:00.000Z",
+        closeDate: "2026-09-16T02:30:00.000Z",
+      },
     ],
     // Two positions still open, authored to float +90.00 on the 4487.59 basis
-    // (re-anchored to live gold at login): 10,560.00 + 90.00 = 10,650.00 equity,
-    // i.e. +650.00 on the 10,000 deposited.
+    // (re-anchored to live gold at login): 10,840.00 + 90.00 = 10,930.00 equity,
+    // i.e. +930.00 on the 10,000 deposited.
     trades: [
       {
-        // Long off the 10 Sep 4391.01 low, once re-anchored.
+        // Long taken inside the 16 Sep 02:00 UTC ramp, once re-anchored:
+        // 19.00 below the live price, so ~4315 against a 4334 tape.
         id: crypto.randomUUID(),
         type: "BUY",
         lot: 0.04,
-        entryPrice: 4472.59,
-        sl: 4457.59,
-        tp: 4517.59,
+        entryPrice: 4468.59,
+        sl: 4430.59,
+        tp: 4508.59,
         symbol: "XAUUSD",
-        openDate: "2026-09-10T05:40:00.000Z",
+        openDate: "2026-09-16T02:25:00.000Z",
       },
       {
-        // Short against the 10 Sep push toward 4433.00, once re-anchored.
+        // Hedged into the 16 Sep 4346.85 high an hour later: 7.00 above the
+        // live price, so ~4341 against the same tape.
         id: crypto.randomUUID(),
         type: "SELL",
         lot: 0.02,
-        entryPrice: 4502.59,
-        sl: 4517.59,
-        tp: 4462.59,
+        entryPrice: 4494.59,
+        sl: 4509.59,
+        tp: 4430.59,
         symbol: "XAUUSD",
-        openDate: "2026-09-10T07:25:00.000Z",
+        openDate: "2026-09-16T03:30:00.000Z",
       },
     ]
   },
@@ -2323,7 +2405,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
     },
     balance: 5000,
     pnl: 70,
-    equity: 5500,
+    equity: 5620,
     initialDepositAmount: 5000,
     initialDepositDate: "2026-09-01T00:00:00Z",
     transactions: [
@@ -2335,7 +2417,7 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
         status: "Completed",
       }
     ],
-    // Seven closed trades = exactly +430.00 realised, so balance = 5,430.00.
+    // Twelve closed trades = exactly +550.00 realised, so balance = 5,550.00.
     closedTrades: [
       {
         // Rode 01 Sep almost the whole way down, 4455 -> 4348.
@@ -2435,31 +2517,103 @@ export const USERS_DATA: Record<string, { user: UserData; balance: number; pnl: 
         openDate: "2026-09-09T11:30:00.000Z",
         closeDate: "2026-09-09T17:50:00.000Z",
       },
+      {
+        // Same 10 Sep short as the larger book, entered later and smaller.
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.02,
+        entryPrice: 4400.20,
+        exitPrice: 4338.70,
+        sl: 4442.00,
+        tp: 4310.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-10T08:20:00.000Z",
+        closeDate: "2026-09-10T12:45:00.000Z",
+      },
+      {
+        // Long the 11 Sep base at 4315.30, out into the 4405.02 spike high.
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.02,
+        entryPrice: 4315.30,
+        exitPrice: 4377.80,
+        sl: 4294.00,
+        tp: 4412.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-11T03:45:00.000Z",
+        closeDate: "2026-09-11T12:45:00.000Z",
+      },
+      {
+        // Caught by the same 14 Sep break to 4265.44; stopped at 4281.00.
+        id: crypto.randomUUID(),
+        type: "BUY",
+        lot: 0.03,
+        entryPrice: 4332.50,
+        exitPrice: 4281.00,
+        sl: 4281.00,
+        tp: 4370.00,
+        closeReason: "SL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-14T04:30:00.000Z",
+        closeDate: "2026-09-14T12:40:00.000Z",
+      },
+      {
+        // Short 15 Sep from 4310.80, covered at 4272.55 in the 08:00 UTC low.
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.02,
+        entryPrice: 4310.80,
+        exitPrice: 4272.55,
+        sl: 4326.00,
+        tp: 4262.00,
+        closeReason: "MANUAL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-15T02:20:00.000Z",
+        closeDate: "2026-09-15T08:35:00.000Z",
+      },
+      {
+        // Stayed short into 16 Sep and the 02:00 UTC ramp took the stop at
+        // 4320.00 on its way to 4346.85.
+        id: crypto.randomUUID(),
+        type: "SELL",
+        lot: 0.02,
+        entryPrice: 4295.00,
+        exitPrice: 4320.00,
+        sl: 4320.00,
+        tp: 4262.00,
+        closeReason: "SL",
+        symbol: "XAUUSD",
+        openDate: "2026-09-16T01:30:00.000Z",
+        closeDate: "2026-09-16T02:25:00.000Z",
+      },
     ],
     // Two longs still open, authored to float +70.00 on the 4487.59 basis:
-    // 5,430.00 + 70.00 = 5,500.00 equity, i.e. +500.00 on the 5,000 deposited.
+    // 5,550.00 + 70.00 = 5,620.00 equity, i.e. +620.00 on the 5,000 deposited.
     trades: [
       {
-        // Long off the 10 Sep 4391.01 low, once re-anchored.
+        // Reversed straight after the 02:25 stop-out and went long with the
+        // 16 Sep ramp: 15.00 below the live price, so ~4319 on a 4334 tape.
         id: crypto.randomUUID(),
         type: "BUY",
         lot: 0.03,
         entryPrice: 4472.59,
-        sl: 4457.59,
-        tp: 4517.59,
+        sl: 4432.59,
+        tp: 4507.59,
         symbol: "XAUUSD",
-        openDate: "2026-09-10T05:40:00.000Z",
+        openDate: "2026-09-16T02:40:00.000Z",
       },
       {
-        // Averaged in a little higher the same morning.
+        // Averaged in ten minutes later, 12.50 below the live price.
         id: crypto.randomUUID(),
         type: "BUY",
         lot: 0.02,
         entryPrice: 4475.09,
-        sl: 4460.09,
-        tp: 4520.09,
+        sl: 4434.09,
+        tp: 4510.09,
         symbol: "XAUUSD",
-        openDate: "2026-09-10T06:05:00.000Z",
+        openDate: "2026-09-16T02:50:00.000Z",
       },
     ]
   }
@@ -2499,7 +2653,7 @@ const STORAGE_PREFIX = "tradeelite:account:";
 // v2: XAUUSD moved from a pinned 4487.59 simulation to the live gold feed, so
 // v1 books hold entry prices from the old basis and would show inflated P/L and
 // price lines stranded far below the candles.
-const PERSIST_VERSION = 2;
+const PERSIST_VERSION = 3;
 
 function storageKey(userId: string) {
   return `${STORAGE_PREFIX}${userId}`;
